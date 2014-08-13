@@ -4,7 +4,7 @@
 // @description Enables user to move between new comments.
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 2.1.0
+// @version 2.2.1
 // @updateURL http://userscripts.org:8080/scripts/source/211267.meta.js
 // @downloadURL http://userscripts.org:8080/scripts/source/211267.user.js
 // @grant unsafeWindow
@@ -23,6 +23,9 @@
   n - возврат на одну позицию из стека
   , - возврат на последнюю позицию из стека
   [ ] - перемещение на комментарии того же уровня
+  + - режим сортировки 1: согласно настройкам
+  - - режим сортировки 2: по координате x
+  0 - режим сортировки 3: по дате
   Ctrl+/ - включение/отключение зелёного фона
   
   Скрипт имеет некоторые параметры, которые можно настроить
@@ -59,6 +62,29 @@ var options = {
   by_date:   new Option(false)
 }, optionString = loadOptions();
 
+var sort_order = {
+  USE_OPTIONS: 0,
+  BY_POSITION: 1,
+  BY_DATE:     2,
+  
+  by_position: function(a, b){ return a.y    - b.y;    },
+  by_date:     function(a, b){ return a.date - b.date; },
+  
+  value_: 0,
+  set: function(order){ this.value_ = order; },
+  get: function(){
+    var val = this.value_;
+    if(val == this.USE_OPTIONS) val = options.by_date.get() ? this.BY_DATE : this.BY_POSITION;
+    
+    switch(val){
+    case this.BY_DATE: return this.by_date;
+    case this.BY_POSITION: return this.by_position;
+    default:
+      throw new Error('Unknown order: ' + val);
+    }
+  }
+};
+
 // установка опций по строке optstr
 function applyOptions(optstr){
   optionString = optstr;
@@ -72,7 +98,7 @@ function applyOptions(optstr){
 
 // загрузка строки опций из хранилища
 function loadOptions(){
-  var opts = GM_getValue('options', 'animation=50, expand=0')
+  var opts = GM_getValue('options', 'animation=50, expand=1')
   applyOptions(opts);
   return opts;
 }
@@ -85,7 +111,8 @@ function changeOptions(){
     'Возможные варианты:\n' +
     '  animation=<ms> - время анимации (0 - отключить)\n' +
     '  expand - расширять ли страницу с комментариями\n' +
-    '  by_date - перемещаться по комментариям в хронологическом порядке\n' +
+    '  by_date=1 - перемещаться по комментариям по умолчанию в хронологическом порядке\n' +
+    '  by_date=0 - перемещаться по комментариям по умолчанию порядке их высоты\n' +
     'Примеры:\n' +
     '  animation=0, expand - отключить анимацию, расширять страницу\n' +
     '  animation=0 - отключить анимацию, не расширять страницу'
@@ -166,21 +193,11 @@ function Position(x, y, element){
     element = $(element);
     this.width = element.width();
     this.element = element;
-    this.useDate();
+    
+    var date = this.element.find('abbr.published').attr('title');
+    if(date != null) this.date = +new Date(date);
   }
 }
-
-Position.prototype.useDate = function(){
-  if(!options.by_date.get()) return;
-  var date = this.element.find('abbr.published').attr('title');
-  if(date != null) this.date = +new Date(date);
-};
-
-Position.prototype.compare = function(p){
-  if(options.by_date.get())
-    return this.date - p.date;
-  return this.y - p.y;
-};
 
 // простая прокрутка до (x|null, y), возможно с анимацией
 function _scroll(x, y){
@@ -297,7 +314,7 @@ function siblings(comment){
 function positions(sel){
   return $.makeArray($(sel))
     .map(position)
-    .sort(function(a,b){ return a.compare(b); });
+    .sort(sort_order.get());
 }
 
 // список позиций постов и всех комментариев
@@ -371,6 +388,11 @@ $body.keypress(function(event){
     // перемещение на комментарии того же уровня:
     case '[': case 'х': moveOn(allSiblings(),         +1); break; // ниже
     case ']': case 'ъ': moveOn(allSiblings(),         -1); break; // выше
+    
+    // переключение режимов сортировки
+    case '=': sort_order.set(sort_order.USE_OPTIONS); break; // по умолчанию
+    case '-': sort_order.set(sort_order.BY_POSITION); break; // по координате
+    case '0': sort_order.set(sort_order.BY_DATE);     break; // по дате
     
     // перемещение на родительский комментарий с запоминанием текущей позиции
     case 'ь': case 'm':
