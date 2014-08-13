@@ -4,9 +4,9 @@
 // @description Enables user to move between new comments.
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 2.0.4
-// @updateURL http://userscripts.org/scripts/source/211267.meta.js
-// @downloadURL http://userscripts.org/scripts/source/211267.user.js
+// @version 2.1.0
+// @updateURL http://userscripts.org:8080/scripts/source/211267.meta.js
+// @downloadURL http://userscripts.org:8080/scripts/source/211267.user.js
 // @grant unsafeWindow
 // @grant GM_getValue
 // @grant GM_setValue
@@ -55,14 +55,15 @@ Option.prototype.get = function(){
 
 var options = {
   animation: new Option(0),
-  expand:    new Option(false)
+  expand:    new Option(false),
+  by_date:   new Option(false)
 }, optionString = loadOptions();
 
 // установка опций по строке optstr
 function applyOptions(optstr){
   optionString = optstr;
   for(var name in options) options[name].setDefault();
-  optstr.split(/[^a-z=0-9]+/).forEach(function(o){
+  optstr.split(/[^a-z_=0-9]+/).forEach(function(o){
     var option = o.split('='), oname = option[0];
     if(!(oname in options)) return;
     options[oname].set(option.length > 1 ? +option[1] : true);
@@ -84,6 +85,7 @@ function changeOptions(){
     'Возможные варианты:\n' +
     '  animation=<ms> - время анимации (0 - отключить)\n' +
     '  expand - расширять ли страницу с комментариями\n' +
+    '  by_date - перемещаться по комментариям в хронологическом порядке\n' +
     'Примеры:\n' +
     '  animation=0, expand - отключить анимацию, расширять страницу\n' +
     '  animation=0 - отключить анимацию, не расширять страницу'
@@ -159,14 +161,24 @@ function expandPage(){
 function Position(x, y, element){
   this.x = x | 0;
   this.y = y | 0;
+  this.date = 0;
   if(element){
     element = $(element);
     this.width = element.width();
     this.element = element;
+    this.useDate();
   }
 }
 
+Position.prototype.useDate = function(){
+  if(!options.by_date.get()) return;
+  var date = this.element.find('abbr.published').attr('title');
+  if(date != null) this.date = +new Date(date);
+};
+
 Position.prototype.compare = function(p){
+  if(options.by_date.get())
+    return this.date - p.date;
   return this.y - p.y;
 };
 
@@ -230,8 +242,15 @@ function position(x){
 // ближайшая позиция из arr к позиции value
 function nearest(arr, value){
   if(!arr.length) return 0;
-  for(var i=0; i<arr.length; ++i) if(arr[i].y > value.y) return i - 1;
-  return arr.length - 1;
+  var n = 0, d = Infinity;
+  for(var i=0; i<arr.length; ++i){
+    var delta = Math.abs(arr[i].y - value.y);
+    if(delta < d){
+      d = delta;
+      n = i;
+    }
+  }
+  return n;
 }
 
 // элемент номер id массива arr с автокоррекцией диапазона
