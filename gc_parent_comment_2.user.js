@@ -6,8 +6,6 @@
 // @include	http://www.govnokod.ru/*
 // @version	1.0.0
 // @grant	unsafeWindow
-// @updateURL	http://userscripts.org/scripts/source/486137.meta.js
-// @downloadURL	http://userscripts.org/scripts/source/486137.user.js
 // ==/UserScript==
 
 /*

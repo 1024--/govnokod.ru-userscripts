@@ -5,8 +5,6 @@
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
 // @version 2.2.1
-// @updateURL http://userscripts.org:8080/scripts/source/211267.meta.js
-// @downloadURL http://userscripts.org:8080/scripts/source/211267.user.js
 // @grant unsafeWindow
 // @grant GM_getValue
 // @grant GM_setValue
