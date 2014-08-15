@@ -4,7 +4,7 @@
 // @description Logs changed topics.
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.1.1
+// @version 1.2.0
 // @grant none
 // ==/UserScript==
 
@@ -51,9 +51,7 @@
     return obj;
   }
   
-  function appendPosts($from){
-    var posts = unpack(ls.posts || '');
-  
+  function appendPosts($from, posts){
     $from.find('a.entry-title').each(function(_,x){
       var link = x.href.match(/\d+$/);
       if(link){
@@ -61,8 +59,6 @@
         console.log('A new post: ' + link[0]);
       }else console.error('Invalid entry-title', x);
     });
-    
-    ls.posts = pack(posts);
   }
 
   var ls = window.localStorage || {};
@@ -98,9 +94,15 @@
   case '/comments':
   case '/':
   default:
+    var posts = unpack(ls.posts || '');
+    
     appendPosts($('abbr.published, p.author>abbr').filter(function() {
       return new Date($(this).attr('title')) > new Date(+ls.time);
-    }).parents('li.hentry'));
+    }).parents('li.hentry'), posts);
+    
+    appendPosts($('.entry-comments-new').parents('li.hentry'), posts);
+    
+    ls.posts = pack(posts);
     break;
   }
   
