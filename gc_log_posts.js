@@ -4,7 +4,7 @@
 // @description Logs changed topics.
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.1.0
+// @version 1.1.1
 // @grant none
 // ==/UserScript==
 
