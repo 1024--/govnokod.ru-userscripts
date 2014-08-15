@@ -69,12 +69,6 @@
   if(!ls.time) ls.time = '0';
   
   switch(location.pathname){
-  case '/comments':
-  case '/':
-    appendPosts($('abbr.published').filter(function() {
-      return new Date($(this).attr('title')) > new Date(+ls.time);
-    }).parents('li.hentry'));
-    break;
   
   case '/user/login':
     if(!ls.posts) break;
@@ -101,8 +95,12 @@
       .append(deletePosts);
     break;
     
+  case '/comments':
+  case '/':
   default:
-    appendPosts($('.entry-comment-wrapper.new').parents('li.hentry'));
+    appendPosts($('abbr.published, p.author>abbr').filter(function() {
+      return new Date($(this).attr('title')) > new Date(+ls.time);
+    }).parents('li.hentry'));
     break;
   }
   
