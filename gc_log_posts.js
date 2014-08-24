@@ -4,7 +4,7 @@
 // @description Logs changed topics.
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.2.0
+// @version 1.2.1
 // @grant none
 // ==/UserScript==
 
@@ -84,7 +84,8 @@
     
     $('li.hentry')
       .append('<div class="user-changed-posts"><br/>Изменённые посты с ' +
-        (new Date(+ls.time)).toLocaleString() + ': <tt>"' + 
+        (new Date(+ls.time)).toLocaleString() +
+        ': <tt style="word-break: break-all;">"' + 
         String(ls.posts).replace(/\d+/g, '<a href="/$&">$&</a>') +
         '"</tt> </div>')
       .find('.user-changed-posts')
