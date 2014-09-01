@@ -4,7 +4,7 @@
 // @description Logs changed topics.
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.2.1
+// @version 1.2.2
 // @grant none
 // ==/UserScript==
 
@@ -55,6 +55,7 @@
     $from.find('a.entry-title').each(function(_,x){
       var link = x.href.match(/\d+$/);
       if(link){
+        $(x).parents('li.hentry>h2').append(' <sup style="color: red">new</sup>');
         posts[link[0]] = true;
         console.log('A new post: ' + link[0]);
       }else console.error('Invalid entry-title', x);
