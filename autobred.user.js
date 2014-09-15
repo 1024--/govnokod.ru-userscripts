@@ -4,7 +4,7 @@
 // @description sends something strange
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.0.0
+// @version 1.0.1
 // @grant none
 // ==/UserScript==
 
@@ -56,19 +56,17 @@ function es(s){ return Array.prototype.slice.apply(document.querySelectorAll(s))
 function e(id){ return document.getElementById(id); }
 
 (function(){
+  
+  if(Math.random() > 0.1 || document.forms.length !== 1) return;
 
   var base = es('.comment-text').map(function(x){ return x.innerText; }).join(' ');
-  // var comments = es('a.comment-link').map(function(x){ return /comment(\d+)/.exec(x.href)[1]; });
   var answerButtons = es('a.answer');
   var form = document.forms[0];
+  
+  if(base.length < 200 || !answerButtons.length) return;
 
-  if(
-    document.forms.length === 1 && base.length > 200 &&
-    answerButtons.length && Math.random() < 0.1
-  ){
-    answerButtons[mt_rand(0, answerButtons.length)].onclick();
-    e('formElm_text').value = bred(base, 300, 4, 2);
-    form.onsubmit();
-  }
+  answerButtons[mt_rand(0, answerButtons.length)].onclick();
+  e('formElm_text').value = bred(base, 300, 4, 2);
+  form.onsubmit();
   
 })();
