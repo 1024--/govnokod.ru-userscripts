@@ -4,7 +4,7 @@
 // @description sends something strange
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.1.4
+// @version 1.2.0
 // @grant none
 // ==/UserScript==
 
@@ -46,8 +46,8 @@ function bugurt($start, $pairs, $len, $base) {
   return $result;
 }
  
-function bred($text, $textlen, $base, $chlen) {
-  return bugurt(mb_substr($text, 0, $base), stringToPairs($text, $chlen, $base), $textlen, $base);
+function bred($text, $start, $textlen, $base, $chlen) {
+  return bugurt(mb_substr($start, 0, $base), stringToPairs($text, $chlen, $base), $textlen, $base);
 }
 
 // Берём текст из комментариев и отвечаем.
@@ -57,7 +57,8 @@ function e(id){ return document.getElementById(id); }
 
 (function(){
   
-  var base = es('.comment-text').map(function(x){ return x.textContent; }).join(' ');
+  var comments = es('.comment-text').map(function(x){ return x.textContent; });
+  var base = comments.join(' ');
   var answerButtons = es('a.answer, h3>a');
   
   if(base.length < 200 || !answerButtons.length) return;
@@ -70,7 +71,7 @@ function e(id){ return document.getElementById(id); }
     ans.style.marginLeft = '1ex';
     ans.addEventListener('click', function(event){
       button.onclick();
-      e('formElm_text').value = bred(base, 300, 4, 2);
+      e('formElm_text').value = bred(base, comments[mt_rand(0, comments.length - 1)], 300, 4, 2);
       event.preventDefault();
     });
     button.parentNode.appendChild(ans);
