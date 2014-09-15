@@ -4,14 +4,14 @@
 // @description sends something strange
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.1.3
+// @version 1.1.4
 // @grant none
 // ==/UserScript==
 
 function count(x){ return x.length == null ? Object.keys(x).length : x.length; }
 function mb_strlen(s){ return s.length; }
 function mb_substr(str, start, length){ return str.substr(start, length); }
-function mt_rand(a, b){ return Math.random() * (b-a) + a | 0; }
+function mt_rand(a, b){ return Math.random() * (1+b-a) + a | 0; }
 
 // Адаптированный код inkanus-gray
 // http://govnokod.ru/16567#comment247654
