@@ -4,7 +4,7 @@
 // @description sends something strange
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.1.0
+// @version 1.1.1
 // @grant none
 // ==/UserScript==
 
@@ -57,7 +57,7 @@ function e(id){ return document.getElementById(id); }
 
 (function(){
   
-  var base = es('.comment-text').map(function(x){ return x.textContent; }).join(' ');
+  var base = es('.comment-text, div.entry-comment').map(function(x){ return x.textContent; }).join(' ');
   var answerButtons = es('a.answer, h3>a');
   
   if(base.length < 200 || !answerButtons.length) return;
