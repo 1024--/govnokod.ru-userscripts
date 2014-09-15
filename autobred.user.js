@@ -4,7 +4,7 @@
 // @description sends something strange
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.0.2
+// @version 1.1.0
 // @grant none
 // ==/UserScript==
 
@@ -57,16 +57,22 @@ function e(id){ return document.getElementById(id); }
 
 (function(){
   
-  if(Math.random() > 0.1 || document.forms.length !== 1) return;
-
   var base = es('.comment-text').map(function(x){ return x.textContent; }).join(' ');
-  var answerButtons = es('a.answer');
-  var form = document.forms[0];
+  var answerButtons = es('a.answer, h3>a');
   
   if(base.length < 200 || !answerButtons.length) return;
-
-  answerButtons[mt_rand(0, answerButtons.length)].onclick();
-  e('formElm_text').value = bred(base, 300, 4, 2);
-  form.onsubmit();
+  
+  answerButtons.forEach(function(button){
+    var ans = document.createElement('a');
+    ans.href = '#I-should-enable-javascript';
+    ans.innerHTML = 'Ответить бредом';
+    ans.className = 'answer bred-answer';
+    ans.style.marginLeft = '1ex';
+    ans.addEventListener('click', function(event){
+      button.onclick();
+      e('formElm_text').value = bred(base, 300, 4, 2);
+    });
+    button.parentNode.appendChild(ans);
+  });
   
 })();
