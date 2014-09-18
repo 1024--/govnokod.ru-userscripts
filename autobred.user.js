@@ -4,50 +4,43 @@
 // @description sends something strange
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.2.0
+// @version 1.3.0
 // @grant none
 // ==/UserScript==
-
-function count(x){ return x.length == null ? Object.keys(x).length : x.length; }
-function mb_strlen(s){ return s.length; }
-function mb_substr(str, start, length){ return str.substr(start, length); }
-function mt_rand(a, b){ return Math.random() * (1+b-a) + a | 0; }
 
 // Адаптированный код inkanus-gray
 // http://govnokod.ru/16567#comment247654
 
-function stringToPairs($s, $chlen, $base) {
-  var $pairs = {};
-  for (var $i = 0; $i < mb_strlen($s) - $base; $i++) {
-    var s = mb_substr($s, $i, $base);
-    if(!(s in $pairs)) $pairs[s] = [];
-    $pairs[s].push(mb_substr($s, $i + $base, $chlen));
+function rand(n) { return Math.random() * n | 0; }
+
+function stringToPairs(s, chlen, base) {
+  var pairs = {};
+  for (var i = 0, n = s.length - base; i < n; ++i) {
+    var key = s.substr(i, base);
+    if(!(key in pairs)) pairs[key] = [];
+    pairs[key].push(s.substr(i + base, chlen));
   }
-  return $pairs;
+  return pairs;
 }
  
-function getNextSym($s, $pairs) {
-  var $next = $pairs[$s] || [];
-  var $length = count($next);
-  return ($length > 0) ? $next[mt_rand(0, $length -1)] : '';
+function getNextSym(s, pairs) {
+  if(!(s in pairs)) return '';
+  var next = pairs[s];
+  return next.length ? next[rand(next.length)] : '';
 }
  
-function right($s, $len) {
-  return mb_substr($s, mb_strlen($s) - $len, $len);
-}
- 
-function bugurt($start, $pairs, $len, $base) {
-  var $result = $start;
-  while ($len > 0 && $start !== '') {
-    $start = getNextSym(right($result, $base), $pairs);
-    $result += $start;
-    $len--;
+function bugurt(start, pairs, len, base) {
+  var result = start;
+  while (len > 0 && start !== '') {
+    start = getNextSym(result.substr(-base), pairs);
+    result += start;
+    len--;
   }
-  return $result;
+  return result;
 }
  
-function bred($text, $start, $textlen, $base, $chlen) {
-  return bugurt(mb_substr($start, 0, $base), stringToPairs($text, $chlen, $base), $textlen, $base);
+function bred(text, start, textlen, base, chlen) {
+  return bugurt(start.substr(0, base), stringToPairs(text, chlen, base), textlen, base);
 }
 
 // Берём текст из комментариев и отвечаем.
@@ -58,10 +51,10 @@ function e(id){ return document.getElementById(id); }
 (function(){
   
   var comments = es('.comment-text').map(function(x){ return x.textContent; });
-  var base = comments.join(' ');
+  var text = comments.join(' ');
   var answerButtons = es('a.answer, h3>a');
   
-  if(base.length < 200 || !answerButtons.length) return;
+  if(text.length < 200 || !answerButtons.length) return;
   
   answerButtons.forEach(function(button){
     var ans = document.createElement('a');
@@ -71,7 +64,7 @@ function e(id){ return document.getElementById(id); }
     ans.style.marginLeft = '1ex';
     ans.addEventListener('click', function(event){
       button.onclick();
-      e('formElm_text').value = bred(base, comments[mt_rand(0, comments.length - 1)], 300, 4, 2);
+      e('formElm_text').value = bred(text, comments[rand(comments.length)], 300, 4, 2);
       event.preventDefault();
     });
     button.parentNode.appendChild(ans);
