@@ -4,7 +4,7 @@
 // @description Подключает бесконечный сток Борманда к стоку ГК
 // @include http://govnokod.ru/comments
 // @include http://www.govnokod.ru/comments
-// @version 1.0.0
+// @version 1.0.1
 // @grant none
 // ==/UserScript==
 
@@ -45,7 +45,9 @@
     var avatar = UID == 1 ?
       '/files/avatars/guest_28.png' :
       'http://www.gravatar.com/avatar/' + entry.user.ava + '?default=http%3A%2F%2Fgovnokod.ru%2Ffiles%2Favatars%2Fnoavatar_28.png&amp;r=pg&amp;size=28';
-    var commText = entry.text;
+    var commHTML = entry.text;
+    
+    console.log(entry);
 
     return $('<li/>', {'class': "hentry"})
       .append($('<h2/>', { text: 'Комментарий к ' })
@@ -60,7 +62,7 @@
                   .append($('<a/>', {href: userRef, text: userName})))
                 .append($('<abbr/>', {'class': "published", title: time, text: hrtime}))
                 .append($('<a/>', {href: commRef, name: commName, title: "Ссылка на комментарий", 'class': "comment-link", text: '#'})))
-              .append($('<div/>', {'class': "entry-comment", text: commText}))
+              .append($(commHTML))
               .append($('<a/>', {'class': "answer", href: answerRef, text: 'Ответить'}))))));
   }
 
