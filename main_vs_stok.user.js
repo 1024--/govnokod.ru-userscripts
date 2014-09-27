@@ -4,7 +4,7 @@
 // @description Добавляет в сток ГК информацию о постах с главной.
 // @include http://govnokod.ru/comments
 // @include http://www.govnokod.ru/comments
-// @version 1.0.0
+// @version 1.0.1
 // @grant none
 // ==/UserScript==
 
@@ -100,10 +100,20 @@
       }
     }
     
-    var stok = stokElement();
-    for(; m < posts.length; ++m){
-      stok.append(postInfo(posts[m]));
-    }
+    // Посты, созданные ранее самого раннего комментария из стока.
+    // var stok = stokElement();
+    // for(; m < posts.length; ++m){
+      // stok.append(postInfo(posts[m]));
+    // }
+    
+    // Для лучшей состыковки со стоком Борманда, не будем их выводить, но упомянем.
+    if(m < posts.length)
+      stokElement()
+        .append(infoBlock('Ещё говнокоды с главной', '#eee')
+          .append($('<span/>', {html:
+            posts.slice(m).map(function(post){
+              return '<a href="/' + post[pidID] + '">#' + post[pidID] + '</a>'; })
+            .join(', ') + '.' })));
   
   }
 
