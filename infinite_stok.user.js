@@ -4,7 +4,7 @@
 // @description Подключает бесконечный сток Борманда к стоку ГК
 // @include http://govnokod.ru/comments
 // @include http://www.govnokod.ru/comments
-// @version 0.1.0
+// @version 0.1.1
 // @grant none
 // ==/UserScript==
 
@@ -32,6 +32,7 @@
   }
 
   function postInfo(entry){
+    var UID = entry.user.id;
     var PID = entry.thread;
     var PID2 = entry.thread;
     var CID = entry.id;
@@ -39,11 +40,13 @@
     var commName = 'comment' + CID;
     var commRef = '/' + PID + '#comment' + CID;
     var answerRef = '/comments/' + PID2 + '/post?replyTo=' + CID;
-    var userRef = '/user/' + entry.user.id;
+    var userRef = '/user/' + UID;
     var userName = entry.user.name;
     var time = entry.published;
     var hrtime = entry.published;
-    var avatar = 'http://www.gravatar.com/avatar/' + entry.user.ava + '?default=http%3A%2F%2Fgovnokod.ru%2Ffiles%2Favatars%2Fnoavatar_28.png&amp;r=pg&amp;size=28';
+    var avatar = UID == 1 ?
+      '/files/avatars/guest_28.png' :
+      entry.user. 'http://www.gravatar.com/avatar/' + entry.user.ava + '?default=http%3A%2F%2Fgovnokod.ru%2Ffiles%2Favatars%2Fnoavatar_28.png&amp;r=pg&amp;size=28';
     var commText = entry.text;
 
     return $('<li/>', {'class': "hentry"})
