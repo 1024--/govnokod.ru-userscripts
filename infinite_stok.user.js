@@ -4,7 +4,7 @@
 // @description Подключает бесконечный сток Борманда к стоку ГК
 // @include http://govnokod.ru/comments
 // @include http://www.govnokod.ru/comments
-// @version 1.0.2
+// @version 1.0.3
 // @grant none
 // ==/UserScript==
 
@@ -78,8 +78,8 @@
   function appendPosts(stok){
     var REQUIRED_VERSION = 2;
     if(stok.api_version != REQUIRED_VERSION) {
-      stokElement().append(error('Борманд сменил версию API. Было ' + REQUIRED_VERSION + ', стало ' + stok.api_version));
-      return;
+      stokElement().append(error('Борманд сменил версию API. Было ' + REQUIRED_VERSION + ', стало ' + stok.api_version + '.' +
+        ' Надеемся на обратную совместимость.'));
     }
 
     var i = filterInfiniteStok(stok.comments);
@@ -106,7 +106,7 @@
       cache: false,
       success: function(data){
         try {
-          appendPosts(JSON.parse(data.replace(/[\r\n]/g,'')));
+          appendPosts(JSON.parse(data));
         } catch(e){
           appendLoadButton();
         }
