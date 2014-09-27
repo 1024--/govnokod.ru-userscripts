@@ -4,11 +4,13 @@
 // @description Logs changed topics.
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.2.2
+// @version 1.3.0
 // @grant none
 // ==/UserScript==
 
 (function(){
+  
+  var SCRIPT_ID = '5e46435b-58ec-4516-92b5-8251cc89c80e';
 
   function pack(obj){
     var posts = Object.keys(obj)
@@ -62,13 +64,13 @@
     });
   }
 
-  var ls = window.localStorage || {};
-  if(!ls.time) ls.time = '0';
+  var ls = window.localStorage;
+  if(!ls.getItem(SCRIPT_ID + 'time')) ls.setItem(SCRIPT_ID + 'time', '0');
   
   switch(location.pathname){
   
   case '/user/login':
-    if(!ls.posts) break;
+    if(!ls.getItem(SCRIPT_ID + 'posts')) break;
     
     var deletePosts = document.createElement('a');
     deletePosts.href = '#';
@@ -76,8 +78,8 @@
     
     deletePosts.addEventListener('click', function(event){
       if(confirm('Вы действительно хотите удалить всю информацию о постах?')){
-        ls.time = +new Date - 1000 * 3600;
-        ls.posts = '';
+        ls.setItem(SCRIPT_ID + 'time', +new Date - 1000 * 3600);
+        ls.setItem(SCRIPT_ID + 'posts', '');
         $('.user-changed-posts').remove();
       }
       event.preventDefault();
@@ -85,9 +87,9 @@
     
     $('li.hentry')
       .append('<div class="user-changed-posts"><br/>Изменённые посты с ' +
-        (new Date(+ls.time)).toLocaleString() +
+        (new Date(+ls.getItem(SCRIPT_ID + 'time'))).toLocaleString() +
         ': <tt style="word-break: break-all;">"' + 
-        String(ls.posts).replace(/\d+/g, '<a href="/$&">$&</a>') +
+        String(ls.getItem(SCRIPT_ID + 'posts')).replace(/\d+/g, '<a href="/$&">$&</a>') +
         '"</tt> </div>')
       .find('.user-changed-posts')
       .append(deletePosts);
@@ -96,15 +98,15 @@
   case '/comments':
   case '/':
   default:
-    var posts = unpack(ls.posts || '');
+    var posts = unpack(ls.getItem(SCRIPT_ID + 'posts') || '');
     
     appendPosts($('abbr.published, p.author>abbr').filter(function() {
-      return new Date($(this).attr('title')) > new Date(+ls.time);
+      return new Date($(this).attr('title')) > new Date(+ls.getItem(SCRIPT_ID + 'time'));
     }).parents('li.hentry'), posts);
     
     appendPosts($('.entry-comments-new').parents('li.hentry'), posts);
     
-    ls.posts = pack(posts);
+    ls.setItem(SCRIPT_ID + 'posts', pack(posts));
     break;
   }
   
