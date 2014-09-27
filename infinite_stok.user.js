@@ -4,12 +4,11 @@
 // @description Подключает бесконечный сток Борманда к стоку ГК
 // @include http://govnokod.ru/comments
 // @include http://www.govnokod.ru/comments
-// @version 1.0.3
+// @version 1.0.4
 // @grant none
 // ==/UserScript==
 
 (function(){
-  
 
   function text(t){ return document.createTextNode(t); };
 
@@ -37,48 +36,63 @@
     var postRef = '/' + PID;
     var commName = 'comment' + CID;
     var commRef = '/' + PID + '#comment' + CID;
-    var answerRef = PID2 == null ? commRef : '/comments/' + PID2 + '/post?replyTo=' + CID;
+    var answerRef = PID2 == null ?
+      commRef :
+      '/comments/' + PID2 + '/post?replyTo=' + CID;
     var userRef = '/user/' + UID;
     var userName = entry.user.name;
     var time = entry.published;
     var hrtime = entry.published;
     var avatar = UID == 1 ?
       '/files/avatars/guest_28.png' :
-      'http://www.gravatar.com/avatar/' + entry.user.ava + '?default=http%3A%2F%2Fgovnokod.ru%2Ffiles%2Favatars%2Fnoavatar_28.png&amp;r=pg&amp;size=28';
+      'http://www.gravatar.com/avatar/' + entry.user.ava +
+      '?default=http%3A%2F%2Fgovnokod.ru%2Ffiles' +
+      '%2Favatars%2Fnoavatar_28.png&amp;r=pg&amp;size=28';
     var commHTML = entry.text;
     
     return $('<li/>', {'class': "hentry"})
-      .append($('<h2/>', { text: 'Комментарий к ' })
-        .append($('<a/>', {rel: "bookmark", 'class': "entry-title", href: postRef, text: 'говнокоду #' + PID})))
+      .append($('<h2/>', {text: 'Комментарий к ' })
+        .append($('<a/>', {rel: "bookmark", 'class': "entry-title",
+                           href: postRef, text: 'говнокоду #' + PID})))
       .append($('<div/>', {'class': "entry-comments"})
         .append($('<ul/>')
           .append($('<li/>', {'class': "hcomment"})
             .append($('<div/>', {'class': "entry-comment-wrapper"})
               .append($('<p/>', {'class': "entry-info"})
-                .append($('<img/>', {'class': "avatar", src: avatar, alt: "ava", title: "Аватар"}))
+                .append($('<img/>', {'class': "avatar", src: avatar,
+                                     alt: "ava", title: "Аватар"}))
                 .append($('<strong/>', {'class': "entry-author"})
                   .append($('<a/>', {href: userRef, text: userName})))
-                .append($('<abbr/>', {'class': "published", title: time, text: hrtime}))
-                .append($('<a/>', {href: commRef, name: commName, title: "Ссылка на комментарий", 'class': "comment-link", text: '#'})))
+                .append($('<abbr/>', {'class': "published",
+                                      title: time, text: hrtime}))
+                .append($('<a/>', {href: commRef, name: commName,
+                                   title: "Ссылка на комментарий",
+                                   'class': "comment-link", text: '#'})))
               .append($(commHTML))
-              .append($('<a/>', {'class': "answer", href: answerRef, text: 'Ответить'}))))));
+              .append($('<a/>', {'class': "answer", href: answerRef,
+                                 text: 'Ответить'}))))));
   }
 
   function stokElement(){ return $('ol.posts'); }
 
-  function message(type, color, t){
+  function infoBlock(type, color){
     return $('<li/>', {'class': "hentry", style: 'background-color: ' + color })
-      .append($('<h2/>', { text: type, style: 'color: #444' }))
-      .append(text(t));
+      .append($('<h2/>', { text: type, style: 'color: #444' }));
   }
   
-  function error(t){ return message('Ошибка', '#fcc', t); }
-  function warning(t){ return message('Предупреждение', '#ffc', t); }
+  function error(t){
+    return infoBlock('Ошибка', '#fcc').append(text(t));
+  }
+  
+  function warning(t){
+    return infoBlock('Предупреждение', '#ffc').append(text(t));
+  }
 
   function appendPosts(stok){
     var REQUIRED_VERSION = 2;
     if(stok.api_version != REQUIRED_VERSION) {
-      stokElement().append(error('Борманд сменил версию API. Было ' + REQUIRED_VERSION + ', стало ' + stok.api_version + '.' +
+      stokElement().append(error('Борманд сменил версию API. Было ' +
+        REQUIRED_VERSION + ', стало ' + stok.api_version + '.' +
         ' Надеемся на обратную совместимость.'));
     }
 
@@ -97,35 +111,39 @@
   function onLBClick(event){
     $(this).remove();
     
-    stokElement().append($('<li/>', {id: 'infinite-stok-loading', 'class': "hentry", style: 'background-color: #cfc' })
-      .append($('<h2/>', { text: 'Бесконечный сток', style: 'color: #444' }))
-      .append(text('Загружается.')));
+    var stub = infoBlock('Бесконечный сток', '#cfc')
+      .append(text('Загружается...'));
+    
+    stokElement().append(stub);
     
     $.ajax({
       url: "http://bormand.tk/gkapi/latest",
       cache: false,
       success: function(data){
         try {
-          appendPosts(JSON.parse(data));
+          appendPosts(data);
         } catch(e){
-          appendLoadButton();
+          appendLoadButton('Ошибка: ' + e.message);
         }
-        $('#infinite-stok-loading').remove();
+        stub.remove();
       },
-      error: appendLoadButton
+      error: function(){
+        appendLoadButton('Ошибка загрузки бесконечного стока.');
+        stub.remove();
+      }
     });
     
     return false;
   }
     
-  function appendLoadButton(){
-    stokElement().append($('<li/>', {'class': "hentry", style: 'background-color: #cfc' })
-      .append($('<h2/>', { text: 'Бесконечный сток', style: 'color: #444' }))
-      .append('<a href="#">Хочу ещё! Загрузите мне бесконечный сток!</a>')
-      .click(onLBClick)
-    )
+  function appendLoadButton(error){
+    var button = infoBlock('Бесконечный сток', '#cfc');
+    if(error) button.append($('<span/>', {text: error}));
+    button.append('<a href="#">Хочу ещё! Загрузить бесконечный сток!</a>');
+    button.click(onLBClick);
+    stokElement().append(button);
   }
   
-  appendLoadButton();
+  appendLoadButton('');
 
 })();
