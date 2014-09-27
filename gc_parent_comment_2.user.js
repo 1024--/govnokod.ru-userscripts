@@ -4,8 +4,8 @@
 // @description	Adds links to parent commentary to GK comments, and sets parent comment as link tooltip.
 // @include	http://govnokod.ru/*
 // @include	http://www.govnokod.ru/*
-// @version	1.0.0
-// @grant	unsafeWindow
+// @version	1.1.0
+// @grant	none
 // ==/UserScript==
 
 /*
@@ -14,7 +14,7 @@
 */
 
 (function(){
-$ = unsafeWindow.jQuery;
+$ = window.jQuery;
 
 //dirty, DIRTY hack to wait for certain element to appear. -_- 
 //But I have no idea how to do it right.
@@ -105,7 +105,7 @@ function removePreview(event) {
 }
 
 function hijackComments() {
-	var oldLoadComments = unsafeWindow.comments['load'];
+	var oldLoadComments = window.comments['load'];
 
 	function newLoadComments(aElemTrigger) {
 		var $parent = $(aElemTrigger).closest('.entry-comments');
@@ -115,7 +115,7 @@ function hijackComments() {
 			});
 		}
 
-	unsafeWindow.comments['load'] = newLoadComments;
+	window.comments['load'] = newLoadComments;
 	}
 
 function highlightComment(e) {
