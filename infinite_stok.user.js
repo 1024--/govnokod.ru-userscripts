@@ -4,7 +4,7 @@
 // @description Подключает бесконечный сток Борманда к стоку ГК
 // @include http://govnokod.ru/comments
 // @include http://www.govnokod.ru/comments
-// @version 1.0.1
+// @version 1.0.2
 // @grant none
 // ==/UserScript==
 
@@ -47,8 +47,6 @@
       'http://www.gravatar.com/avatar/' + entry.user.ava + '?default=http%3A%2F%2Fgovnokod.ru%2Ffiles%2Favatars%2Fnoavatar_28.png&amp;r=pg&amp;size=28';
     var commHTML = entry.text;
     
-    console.log(entry);
-
     return $('<li/>', {'class': "hentry"})
       .append($('<h2/>', { text: 'Комментарий к ' })
         .append($('<a/>', {rel: "bookmark", 'class': "entry-title", href: postRef, text: 'говнокоду #' + PID})))
