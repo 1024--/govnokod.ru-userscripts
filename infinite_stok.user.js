@@ -4,7 +4,7 @@
 // @description Подключает бесконечный сток Борманда к стоку ГК
 // @include http://govnokod.ru/comments
 // @include http://www.govnokod.ru/comments
-// @version 0.1.2
+// @version 0.1.3
 // @grant none
 // ==/UserScript==
 
@@ -106,7 +106,6 @@
       url: "http://bormand.tk/gkapi/latest",
       cache: false,
       success: function(data){
-        console.log('data:',data);
         try {
           appendPosts(JSON.parse(data.replace(/[\r\n]/g,'')));
         } catch(e){
@@ -122,6 +121,8 @@
       },
       error: appendLoadButton
     });
+    
+    return false;
   }
     
   function appendLoadButton(){
