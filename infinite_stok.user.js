@@ -4,7 +4,7 @@
 // @description Подключает бесконечный сток Борманда к стоку ГК
 // @include http://govnokod.ru/comments
 // @include http://www.govnokod.ru/comments
-// @version 1.0.4
+// @version 1.0.5
 // @grant none
 // ==/UserScript==
 
@@ -12,12 +12,25 @@
 
   function text(t){ return document.createTextNode(t); };
 
+  function id(el, sel){
+    var url = $(el).find(sel).attr('href');
+    if(!url) return;
+    var m = url.match(/\d+$/);
+    return m && m[0];
+  }
+
   function filterInfiniteStok(comments){
-    var lastComment = $('.entry-comment-wrapper a.comment-link:last')[0];
-    var lastPost = $('a.entry-title:last')[0];
+    var entries = $('li.hentry');
+    if(!entries.length) return 0;
     
-    var cid = +lastComment.href.match(/\d+$/)[0];
-    var pid = +lastPost.href.match(/\d+$/)[0];
+    var pid, cid;
+    for(var i=entries.length - 1; i >= 0; --i){
+      pid = id(entries[i], 'a.entry-title');
+      cid = id(entries[i], 'a.comment-link');
+      if(pid && cid) break;
+    }
+    
+    if(!pid || !cid) return 0;
     
     for(var i=0; i<comments.length; ++i){
       var comment = comments[i];
