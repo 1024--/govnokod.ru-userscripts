@@ -4,11 +4,8 @@
 // @description Enables user to move between new comments.
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 2.2.1
-// @grant unsafeWindow
-// @grant GM_getValue
-// @grant GM_setValue
-// @grant GM_registerMenuCommand
+// @version 2.3.0
+// @grant none
 // ==/UserScript==
 
 /*
@@ -27,14 +24,14 @@
   Ctrl+/ - включение/отключение зелёного фона
   
   Скрипт имеет некоторые параметры, которые можно настроить
-        (см. "Настройки комментариев" в меню расширения)
+        (см. "Настройки навигации" в меню пользователя)
 */
 
 (function(){
-var $ = unsafeWindow.jQuery;
 var $html = $('html');
 var $body = $('body');
 var $page = $('body, html');
+var SCRIPT_ID = 'beefdb51-28e7-4ff2-a74b-43d2971e4933';
 
 // управление настройками скрипта ----------------------------------------------
 function Option(defval){
@@ -96,7 +93,7 @@ function applyOptions(optstr){
 
 // загрузка строки опций из хранилища
 function loadOptions(){
-  var opts = GM_getValue('options', 'animation=50, expand=1')
+  var opts = localStorage.getItem(SCRIPT_ID + 'options') || 'animation=50, expand=1, by_date=0';
   applyOptions(opts);
   return opts;
 }
@@ -118,7 +115,7 @@ function changeOptions(){
   );
   if(options == null) return;
   applyOptions(options);
-  GM_setValue('options', optionString);
+  localStorage.setItem(SCRIPT_ID + 'options', optionString);
 }
 
 applyOptions(optionString);
@@ -340,13 +337,25 @@ $('#content')
   .after('<div style="height: ' + window.screen.height + 'px;">&nbsp;</div>');
 
 // увеличиваем страницу по горизонтали
-if(unsafeWindow.location.pathname !== '/comments' && options.expand.get())
+if(window.location.pathname !== '/comments' && options.expand.get())
   expandPage();
 
-GM_registerMenuCommand('Настройки комментариев', changeOptions, 's', 'ы');
+// добавляем настройки
+(function(){
+  // (c)пёрто из https://github.com/bormand/govnokod-board/
+  var configDialog = $("<li><div><p>Настройки навигации:</p></div></li>")
+    .appendTo($('#userpane > .pane-content > ul'));
+  
+  configDialog.append($('<a href="#">открыть настройки навигации</a>')
+    .click(function(event){
+      changeOptions();
+      return false;
+    }));
+  
+})();
 
 var highlighted = false;
-$(unsafeWindow).keydown(function(event){
+$(window).keydown(function(event){
   if(event.which == 191 && event.ctrlKey){
     highlighted = !highlighted; // подсветка зелёным по Ctrl + /
     $('li.hentry, .entry-comment-wrapper').css('background-color', highlighted ? '#4f4' : '#fff');
