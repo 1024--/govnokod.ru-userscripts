@@ -4,7 +4,7 @@
 // @description Подключает бесконечный сток Борманда к стоку ГК
 // @include http://govnokod.ru/comments
 // @include http://www.govnokod.ru/comments
-// @version 1.0.5
+// @version 1.1.0
 // @grant none
 // ==/UserScript==
 
@@ -20,25 +20,17 @@
   }
 
   function filterInfiniteStok(comments){
-    var entries = $('li.hentry');
-    if(!entries.length) return 0;
+    var stokPostsElements = $('li.hentry');
+    var stokPosts = {}, Nstok = 0;
     
-    var pid, cid;
-    for(var i=entries.length - 1; i >= 0; --i){
-      pid = id(entries[i], 'a.entry-title');
-      cid = id(entries[i], 'a.comment-link');
-      if(pid && cid) break;
-    }
+    stokPostsElements.each(function(){
+      var ID = id(this, 'a.entry-title:first');
+      if(ID) stokPosts[ID] = true;
+    });
     
-    if(!pid || !cid) return 0;
-    
-    for(var i=0; i<comments.length; ++i){
-      var comment = comments[i];
-      if(+comment.thread < pid && +comment.id < cid)
-        break;
-    }
-    
-    return i;
+    return comments.filter(function(comm){
+      return !(comm.thread in stokPosts);
+    });
   }
 
   function postInfo(entry){
@@ -109,14 +101,14 @@
         ' Надеемся на обратную совместимость.'));
     }
 
-    var i = filterInfiniteStok(stok.comments);
+    var comments = filterInfiniteStok(stok.comments);
     var fragment = document.createDocumentFragment();
         
-    if(i >= stok.comments.length)
+    if(comments.length >= stok.comments.length)
       fragment.appendChild(warning('Возможно, сток порван.')[0]);
     
-    for(; i< stok.comments.length; ++i)
-      fragment.appendChild(postInfo(stok.comments[i])[0]);
+    for(var i=0; i < comments.length; ++i)
+      fragment.appendChild(postInfo(comments[i])[0]);
     
     stokElement().append(fragment);
   }
