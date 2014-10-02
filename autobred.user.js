@@ -4,7 +4,7 @@
 // @description sends something strange
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.3.0
+// @version 1.4.0
 // @grant none
 // ==/UserScript==
 
@@ -64,7 +64,7 @@ function e(id){ return document.getElementById(id); }
     ans.style.marginLeft = '1ex';
     ans.addEventListener('click', function(event){
       button.onclick();
-      e('formElm_text').value = bred(text, comments[rand(comments.length)], 300, 4, 2);
+      e('formElm_text').value = bred(text, comments[rand(comments.length)], 300, 7, 2);
       event.preventDefault();
     });
     button.parentNode.appendChild(ans);
