@@ -4,7 +4,7 @@
 
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.0.1
+// @version 1.0.2
 // @grant none
 // ==/UserScript==
 
@@ -382,9 +382,16 @@ function processGIF(code, show){
     var comments = es('.entry-comment-wrapper').map(function(comm){
       if(e(comm, '.entry-author > a').textContent in konardos) return;
       var comment = e(comm, '.entry-comment');
+      var prepared = 0, pre;
       
       processGIF(comment.textContent, function(text){
-        comment.innerHTML = '<pre>' + text.replace(/</g, '&gt;') + '</pre>';
+        if(!prepared){
+          comment.innerHTML = '<pre>' + text.replace(/</g, '&gt;') + '</pre>';
+          pre = e(comment, 'pre');
+          prepared = true;
+        }else{
+          pre.textContent = text;
+        }
       });
     });
 
