@@ -4,7 +4,7 @@
 
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.0.2
+// @version 1.0.3
 // @grant none
 // ==/UserScript==
 
@@ -18,6 +18,8 @@
   для перерисовки - установить обработчик ONFRAME с помощью оператора @. Частотой анимации управляет переменная DELAY.
   Все переменные можно менять в любой момент. Ссылок нет, массивов нет, локальных переменных нет, циклов нет (но ONFRAME в вызывается в цикле)
   Внизу есть пример анимации.
+  
+  Этот скрипт можно запускать под Node.js. Тогда он принимает один параметр - имя файла со скриптом goatgif.
 
 По умолчанию установлены следующие переменные/функции:
   Функции:
@@ -159,7 +161,7 @@ function string(img){
 }
 
 function wall(w, h, e){
-  return image(Array(h+1).join('x').replace(/x/g, Array(w).join(e) + '\n'));
+  return image(Array(h+1).join('x').replace(/x/g, Array(w+1).join(e) + '\n'));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -396,7 +398,8 @@ function processGIF(code, show){
     });
 
   }else{
-    var code = String(require('fs').readFileSync('goatgif.txt'));
+    var arg = process.argv[2];
+    var code = arg ? String(require('fs').readFileSync(arg)) : "GOATGIF:1\n(show 'HELLO, WODLD!')";
     processGIF(code, console.log.bind(console));
   }
 })();
