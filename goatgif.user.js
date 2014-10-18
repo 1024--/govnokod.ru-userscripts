@@ -4,7 +4,7 @@
 
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.0.4
+// @version 1.0.5
 // @grant none
 // ==/UserScript==
 
@@ -28,6 +28,7 @@
     @ <actions...> - привязка действия по таймауту (переопределяет ONFRAME)
     do <actions...> - выполнение действий, возврат последнего значения
     mix <objects...> - сливает ASCII-кадры
+    crop <w> <h> <object> - обрезает ASCII-кадр
     stop - остановка анимации (удаляет ONFRAME; следующий кадр не наступает)
     show <objects...> - показывает объекты
     shift <x> <y> <object> - свигает объект на (x, y)
@@ -39,6 +40,7 @@
 
   Переменные:
     HEIGHT - высота кадра или автоматическая высота, если HEIGHT <= 0 или > 100 (по умолчанию HEIGHT = 0)
+    WIDTH - ограничение по ширине (обрезка) или автоматическая ширина, если WIDTH <= 0 или > 100 (по умолчанию WIDTH = 0)
     DELAY - задержка перед следующим кадром (по умолчанию DELAY = 200)
     ONFRAME - обработчик события
   
@@ -164,6 +166,14 @@ function wall(w, h, e){
   return image(Array(h+1).join('x').replace(/x/g, Array(w+1).join(e) + '\n'));
 }
 
+function crop(img, w, h){
+  var w_ = width(img), h_ = height(img);
+  if(w >= w_ && h >= h_) return img;
+  if(w >= w_) return img.slice(0, h);
+  if(h < h_) img = img.slice(0, h);
+  return img.map(function(line){ return line.substring(0, w); });
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // GOATGIF
 
@@ -278,6 +288,7 @@ function processGIF(code, show){
     '(string)': function(str){ return str; },
     'DELAY': function(){ return 200; },
     'HEIGHT': function(){ return 0; },
+    'WIDTH': function(){ return 0; },
     
     '=': function(name, value){
       var v = exec(value);
@@ -297,10 +308,11 @@ function processGIF(code, show){
       return v;
     },
     
-    'shift': function(x, y, obj){ return shift(image(exec(obj)), exec(x), exec(y)); },
+    'shift': function(x, y, obj){ return shift(image(exec(obj)), num(x), num(y)); },
+    'crop': function(w, h, obj){ return crop(image(exec(obj)), num(w), num(h)); },
     'width': function(obj){ return width(image(exec(obj))); },
     'height': function(obj){ return height(image(exec(obj))); },
-    'wall': function(x, y, symb){ return wall(exec(x)|0, exec(y)|0, exec(symb)); },
+    'wall': function(x, y, symb){ return wall(num(x), num(y), exec(symb)); },
     
     'if': function(cond, t, e){
       return exec(cond) ?
@@ -316,7 +328,7 @@ function processGIF(code, show){
     },
     
     'stop': function(){ delete scope['ONFRAME']; },
-    
+        
     'mix': function(){
       return Array.prototype.map.call(arguments, function(arg){
         return image(exec(arg));
@@ -326,8 +338,13 @@ function processGIF(code, show){
     'show': function(arg){
       var frame = arguments.length > 1 ? exec('mix', arguments) : image(exec(arg));
       var H = getv('HEIGHT') | 0, h = height(frame);
-      if(H < h && H >= 0) frame = frame.slice(0, H);
-      else if(H > h && H < 100) frame = frame.concat(Array(H - h).join('*').split('*'));
+      if(H <= 0 || H > 100) H = h;
+      var W = getv('WIDTH') | 0, w = width(frame);
+      if(W <= 0 || W > 100) W = w;
+      
+      if(H > h) frame = frame.concat(Array(H - h).join('*').split('*'));
+      if(W > w) frame = mix(frame, image(Array(W + 1).join(' ')));
+      if(W < w || H < h) frame = crop(frame, W, H);
       show(string(frame));
     },
     
