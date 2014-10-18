@@ -4,7 +4,7 @@
 
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.0.3
+// @version 1.0.4
 // @grant none
 // ==/UserScript==
 
@@ -326,7 +326,7 @@ function processGIF(code, show){
     'show': function(arg){
       var frame = arguments.length > 1 ? exec('mix', arguments) : image(exec(arg));
       var H = getv('HEIGHT') | 0, h = height(frame);
-      if(H < h && H >= 0) frame = frame.slice(0, h);
+      if(H < h && H >= 0) frame = frame.slice(0, H);
       else if(H > h && H < 100) frame = frame.concat(Array(H - h).join('*').split('*'));
       show(string(frame));
     },
