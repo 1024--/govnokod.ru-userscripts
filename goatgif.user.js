@@ -4,7 +4,7 @@
 
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.0.5
+// @version 1.0.6
 // @grant none
 // ==/UserScript==
 
@@ -395,6 +395,7 @@ function processGIF(code, show){
     'Konardo': true,
     'guest': true,
     'Igor_Gandonov': true,
+    'anonimb84a2f6fd141': true,
   };
 
   if(typeof window !== 'undefined'){
