@@ -4,7 +4,7 @@
 
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.0.6
+// @version 1.0.7
 // @grant none
 // ==/UserScript==
 
@@ -100,6 +100,8 @@ f
 // ASCIILIB
 
 function image(txt){
+  if(txt === 0) return ['0'];
+  if(!txt) return [];
   if(txt instanceof Array) return txt;
   return String(txt).replace(/\t/g, '        ').split(/[\r\n]{1,2}/);
 }
