@@ -4,7 +4,7 @@
 // @description describes user by his/her statistics.
 // @include http://govnokod.ru/user/*
 // @include http://www.govnokod.ru/user/*
-// @version 1.0.29
+// @version 1.0.30
 // @grant none
 // ==/UserScript==
 
@@ -186,7 +186,7 @@ new UserProperty ("", "Известные действия", 0, 0, 0, function (
 ];
 
 main("\
-|QK.EP.-G.Ei.L@.E45.-B]I..BW].BZg.Fe0J.1.-Bze.Ey'i|!5.X.v.C.M.C.Ll.Q.yn1.DgDn|l\
+|QK.EP.-G.Ei.L@.E45.-B]L..BW].BZg.Fe0J.1.-Bze.Ey'i|!5.X.v.C.M.C.Ll.Q.yn1.DgDn|l\
 .C^.F.b.J.IR.N#.B.Eb.X.FoC.l.vKa.C^e0|D.X.F.D..X.V..K.D.X,.].Cpj.B+cM|E.CC.=.E.\
 .C.E.D.C..h.b.-BD`.Cy:P||C.'.$.C..F.B..B..DB.l.m'i.:2N!12|B!12.DCBB.!5|B.B.B.B.\
 .B.-B.-B..B.;.;.~eB.#K|!5.D.B..B..E_.Be.B5hR.C&,|||D.O.E.D!9.wX1.gG|j.Ca.F.d.F.\
@@ -554,7 +554,7 @@ I:w.|||!5.C.B.B.B..BJ.y.BJEn.T1{|B.-H.-H..B!8.BJIA.|C.-J.-E..C.B!5.r.r.BJI>.F'<\
 t.BJi#.Dn3)|C.-K...B.C!5.EI.D7.BJs#.C^/%!4|!5.G.-M..B.D.EC.(.BJ~o.DNz|B.-M.-M..\
 B.L.-E...B.We.B2.BJ${.M>|!5.B!5.C5.C5.BJ&r.|l.B?.D.h.E.u.1..V.B.0K.7.BJ>H.BB6L|\
 !5.B.-B.-B..B.).).BJ,O.|B4.-MB.-M.i.BT.CC'.@R..@m.Wr.B/X:.s.BJ]n.Dnh+|C.-C.E.B.\
-B.F0.G7.B.C;.u.FWp.u.BKJc.DnjM||B.G.G.B!9.BKF,.|F.l.G.F..H.P.D.F..Kk.BH.BKGO.B;\
+B.F0.G9.B.C<.u.FWp.u.BKJc.DnjM||B.G.G.B!9.BKF,.|F.l.G.F..H.P.D.F..Kk.BH.BKGO.B;\
 9K|H.d.K.E.D.E8.E}..CU.4.H>?.>.BKH~.DS(c||B.F.F.B..E!5.D_.{.BKLN.NI|!5.F.B..B..\
 fK.D].BKM%.g;1|!5.C!5.Bn.}.BV*(.m|C.I.H.C..F.B..B..EM.#.BKW).Qz2|D.D.B.C.B.F.-L\
 ...B.EL.@.BKaH.J+K||B.-E.-E..B!8.BKnW.|B.C.C.B..K...C.B.L9.BF.BKn'.24j|B.I.I.B.\
@@ -586,7 +586,7 @@ Y.BOd4.B2(c|o.-Y..T.T.4.-K..U.W.@y.).BOg7.DfE<|||!5.B.-B.-B..B.G+.G+.BOkU.|C.O.\
 I.C!9.BOlq.~{^||E.J.H.C.C.F.C..C..D@.%.BOt2.@hH|V.-6.-F.I.M.B=.-G3.-D.D.Bw.C7%.\
 BJ.BOzm.C0Pj|D.-G.B.C.B.n.-N..J.M.2r.BS.BO0s.CpN`||B.J.J.B..E.-B...B.CA.e.BO1N.\
 D4X|C.-Y.-M..C.d.>.D.V.C.a[.3.BXIV.BFj>|!5._.i..a.I.Br(.].BO8v.J&T|B.B.B.B../.S\
-..P.I.By1.BK.BO~/.Ci:|S.C.B.J.I.u@.V=..Vj.F%.BST:.Bb.BO%L.Di`0|D.a.I.D..B.B.B.B\
+..P.I.By1.BK.BO~/.Ci:|S.C.B.J.I.u@.V/..Vj.F$.BST:.Bb.BO%L.Di`0|D.a.I.D..B.B.B.B\
 ..B,.B,.BO%K.Jqh|C.O.I.C..G.-J.-C.B.E.G(./.BO<c.GQ|B.B.B.B..C.B.B.B..FM.E2.BO:B\
 .(|B.L.L.B..C!5.DN.B#.BPG~.IS|B.E.E.B..B!5.CE.CE.BPKO.K`|D.l.K.D..E.C..B.B.E[._\
 .BPW,.C@Pa|!5.C!5.Cy.Ct.BPYR.C|G.P.E.F.B.L.S..F..G9.y.BPoM.Dv_|H.G.D.F.C.@.-Y..\
@@ -1203,8 +1203,8 @@ CNUJ.v|||C.-a.-N..C.G.-M...C.EE.^.CNW8.Gb!4|E.I.D.D.B.a.W.B.N..?f.C].CNYu.B<m/!\
 .C..B..D=.Bk.CN`s.Jh|C.Q.I.C..C.G.F.C..E9.Dq.CN@2.]cn|B!12.CN@0.|M.%.G.K.C.C!5.\
 En.C{.CN&Q.BkSa||E.-L.-I.B.D.BX.t..f.K.Bwv.x.COJu.DEF|B.I.I.B..V.W..J.B.9].C*.C\
 OJ/.Br$|||U.K.F.L.I.Bu.-CU..g.n.CM$.^.COXI.Bpb:|D.L.D.D!9.COY@.YDO|B.D.D.B..Q.D\
-..D.C.RK.).CmyP.6@n|F.N.D.E.B.H...B.B.K>.?.COZ*.C_*|O.BI.H.N..yO.=E.B.gF.CX.Bos\
-x.Bp.COag.CjH8||E.S.F.D.B.L.-C..B.C.FX.e.COf*.BXs[||B.I.I.B..C!5.~.l.COpC.F}|!5\
+..D.C.RK.).CmyP.6@n|F.N.D.E.B.H...B.B.K>.?.COZ*.C_*|O.BI.H.N..yP.=G.B.gG.CX.Bos\
+*.Bp.COag.CjS3||E.S.F.D.B.L.-C..B.C.FX.e.COf*.BXs[||B.I.I.B..C!5.~.l.COpC.F}|!5\
 .M.I..F..J%.@.COpc.Cpg|C.S.O.C..C!5.D2.B}.COrD.HFu|C.-F.E.B.B.Q.J..D..P2.3.COt%\
 .Kk1|B.-K.-K..B!8.COt$.|C.C.D.B.B.D.-B...B.B`.v.COva.D~s|B.C.C.B!9.CO?4.||B.B.B\
 .B..B!5.Z.Z.CO@E.B,|||B.F.F.B..D.F.C.D..C2.+.CO;#.L@*|B.-I.-I..B.C.-G.-C..C.CK.\
@@ -1451,7 +1451,7 @@ e.e.C1&O.|!5.B!5.i.i.C1;=.!24|!5.B!5.t.t.C1zo.|!5.B.H.H.B..G=.G=.C1z2.|B.K.K.B.\
 .D!5.B@.@.C1~H.B>|B.-B.-B..B!8.C1}7.|B.-I.-I..B.E..B.C.B.G_.B).C1@h.C%d|B.-H.-H\
 ..B!8.C1#j.|C.P.O.C!9.DvfN.U|!5.B.E.E.B..BD.BD.C1%y.|B.-I.-I..B.B.-D.-D..B.CY.C\
 Y.C1)T.Hj|C.B.B.B!9.C^n*.J||D.G.D.C..P.B..C.B.gK./.C2Ie.uY#|B!12.C2I9.|Be.Eo.E.\
-BK.P.CW].B]Q.B.BR<.LC.E7mf.Bh.C2J,.B]h2|B.H.H.B..C.-C.C.B.B.BZ.`.C2Kc.I>|C.-_.-\
+BK.P.CW{.B]Q.B.BR<.LC.E7n<.Bh.C2J,.B]jQ|B.H.H.B..C.-C.C.B.B.BZ.`.C2Kc.I>|C.-_.-\
 i..C.D.-G..B.B.Cc.i.C2U1.BMQt|G.-S.-D.C.E.J.C..D.B.Fo.s.C2ap.J8;|C.H.E.C..B!5.o\
 .o.C2cX.fMz|!5.B!5.c.c.C2}>.|!5.F.F.B.D.B.Ek.&.C2pl.ibg|B.-F.-F..B!8.C2qT.|B!12\
 .C2q].|B.O.O.B!9.C2rq.|B.D.D.B!9.C2r,.|B.X.X.B..B.B.B.B..CP.CP.C2sj.Bk||B.D.D.B\
@@ -1804,4 +1804,4 @@ B.K.K.B!9.EwHe.|B.D.D.B!9.EwHh.||C.E.F.B.B!8.EwU7.Px|C.K.I.C!9.EwY7.Mf|B!12.Ewj\
 9.Ew0m.!4|B.-B.-B..B!8.Ew)w.|B!12.Ew<>.|B!12.Ew,j.||B.B.B.B!9.Ew:Q.|B.C.C.B!9.E\
 w:z.||B.B.B.B!9.ExAK.|B!12.ExBQ.||C.-C.-B..C!8.ExSl.Mh!6|B.B.B.B!9.Exmk.|B.-H.-\
 H..B!8.Exmy.",
-{"lastUpdate":1414649000000});
+{"lastUpdate":1414650278000});
