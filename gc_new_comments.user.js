@@ -4,7 +4,7 @@
 // @description Enables user to move between new comments.
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 2.5.0
+// @version 2.5.1
 // @grant none
 // ==/UserScript==
 
@@ -479,9 +479,14 @@ $body.keypress(function(event){
     // раскрытие бесконечного стока Борманда или
     // открытие формы ответа на текущий комментарий
     case 'b': case 'и':
-      var current = currentElement('li.hentry');
+      var current = currentElement('.entry-comment-wrapper');
+      if(current){
+        current.find('a.answer').first().click();
+        return false;
+      }
+      current = currentElement('li.hentry');
       if(!current) break;
-      current.find('a.entry-comments-load, a.answer,' +
+      current.find('a.entry-comments-load,' +
         'a[text=Все комментарии]:visible, a.show-code-trigger,' +
         'a.bormand-stok')
           .first().click();
