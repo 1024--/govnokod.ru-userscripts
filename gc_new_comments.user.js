@@ -4,7 +4,7 @@
 // @description Enables user to move between new comments.
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 2.4.0
+// @version 2.5.0
 // @grant none
 // ==/UserScript==
 
@@ -18,13 +18,21 @@
   n - возврат на одну позицию из стека
   , - возврат на последнюю позицию из стека
   [ ] - перемещение на комментарии того же уровня
-  b - раскрытие раскрытие поста в стоке или показ комментариев к текущему посту
+  b - раскрытие поста в стоке или показ комментариев к текущему посту или
+        раскрытие бесконечного стока Борманда или
+        открытие формы ответа на текущий комментарий
   g - открытие поста в новой вкладке
   
   + - режим сортировки 1: согласно настройкам
   - - режим сортировки 2: по координате x
   0 - режим сортировки 3: по дате
   Ctrl+/ - включение/отключение зелёного фона
+  
+  Shift + h j k l u i o p - перемещение по странице
+    j-k и i-o - вниз-вверх на shift пикселей (одна из настроек)
+    h-l и u-p - на начало-конец страницы
+  
+  Shift+g - закрытие текущего окна
   
   Скрипт имеет некоторые параметры, которые можно настроить
         (см. "Настройки навигации" в меню пользователя)
@@ -57,7 +65,8 @@ Option.prototype.get = function(){
 var options = {
   animation: new Option(0),
   expand:    new Option(false),
-  by_date:   new Option(false)
+  by_date:   new Option(false),
+  shift:     new Option(100)
 }, optionString = loadOptions();
 
 var sort_order = {
@@ -111,6 +120,7 @@ function changeOptions(){
     '  expand - расширять ли страницу с комментариями\n' +
     '  by_date=1 - перемещаться по комментариям по умолчанию в хронологическом порядке\n' +
     '  by_date=0 - перемещаться по комментариям по умолчанию порядке их высоты\n' +
+    '  shift=<число> - количество пикселей, на которое можно перемещаться по Shift+j/k\n' +
     'Примеры:\n' +
     '  animation=0, expand - отключить анимацию, расширять страницу\n' +
     '  animation=0 - отключить анимацию, не расширять страницу'
@@ -381,7 +391,40 @@ $body.keypress(function(event){
   // ничего не делать, если пользователь печатает комментарий
   if(event.target.type === 'textarea') return;
   
-  switch(String.fromCharCode(event.charCode).toLowerCase()){
+  var key = String.fromCharCode(event.charCode).toLowerCase();
+  
+  if(event.shiftKey){
+    var pos = position();
+  
+    switch(key){
+      // перемещение на начало страницы
+      case 'р': case 'h': case 'г': case 'u':
+        scrollTo(new Position(pos.x, 0));
+        break;
+      
+      // перемещение на конец страницы
+      case 'д': case 'l':case 'з': case 'p':
+        scrollTo(new Position(pos.x, $(document).height()));
+        break;
+
+      // перемещение на несколько пикселей вниз
+      case 'о': case 'j': case 'ш': case 'i':
+        scrollTo(new Position(pos.x, pos.y + options.shift.get()));
+        break;
+      
+      // перемещение на несколько пикселей вверх
+      case 'л': case 'k': case 'щ': case 'o':
+        scrollTo(new Position(pos.x, pos.y - options.shift.get()));
+        break;
+      
+      // закрытие текущей вкладки
+      case 'g': case 'п': window.close(); break;
+      
+    }
+    return;
+  }
+  
+  switch(key){
   
     // перемещение на один комментарий/пост среди постов и всех комментариев:
     case 'ш': case 'i': moveOn(allComments(),         +1); break; // ниже
@@ -432,11 +475,13 @@ $body.keypress(function(event){
       children = [];
       break;
     
-    // раскрытие раскрытие поста в стоке или показ комментариев к текущему посту
+    // раскрытие поста в стоке или показ комментариев к текущему посту или
+    // раскрытие бесконечного стока Борманда или
+    // открытие формы ответа на текущий комментарий
     case 'b': case 'и':
       var current = currentElement('li.hentry');
       if(!current) break;
-      current.find('a.entry-comments-load,' +
+      current.find('a.entry-comments-load, a.answer,' +
         'a[text=Все комментарии]:visible, a.show-code-trigger,' +
         'a.bormand-stok')
           .first().click();
