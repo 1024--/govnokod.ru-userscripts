@@ -4,7 +4,7 @@
 // @description Enables user to move between new comments.
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 2.5.1
+// @version 2.5.3
 // @grant none
 // ==/UserScript==
 
@@ -20,7 +20,6 @@
   [ ] - перемещение на комментарии того же уровня
   b - раскрытие поста в стоке или показ комментариев к текущему посту или
         раскрытие бесконечного стока Борманда или
-        открытие формы ответа на текущий комментарий
   g - открытие поста в новой вкладке
   
   + - режим сортировки 1: согласно настройкам
@@ -33,6 +32,7 @@
     h-l и u-p - на начало-конец страницы
   
   Shift+g - закрытие текущего окна
+  Shift+b - открытие формы ответа на текущий комментарий
   
   Скрипт имеет некоторые параметры, которые можно настроить
         (см. "Настройки навигации" в меню пользователя)
@@ -419,6 +419,15 @@ $body.keypress(function(event){
       
       // закрытие текущей вкладки
       case 'g': case 'п': window.close(); break;
+
+      // открытие формы ответа на текущий комментарий
+      case 'b': case 'и':
+        var current = currentElement('.entry-comment-wrapper');
+        if(current){
+          current.find('a.answer').first().click();
+          return false;
+        }
+        break;
       
     }
     return;
@@ -477,14 +486,8 @@ $body.keypress(function(event){
     
     // раскрытие поста в стоке или показ комментариев к текущему посту или
     // раскрытие бесконечного стока Борманда или
-    // открытие формы ответа на текущий комментарий
     case 'b': case 'и':
-      var current = currentElement('.entry-comment-wrapper');
-      if(current){
-        current.find('a.answer').first().click();
-        return false;
-      }
-      current = currentElement('li.hentry');
+      var current = currentElement('li.hentry');
       if(!current) break;
       current.find('a.entry-comments-load,' +
         'a[text=Все комментарии]:visible, a.show-code-trigger,' +
