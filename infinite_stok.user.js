@@ -4,7 +4,7 @@
 // @description Подключает бесконечный сток Борманда к стоку ГК
 // @include http://govnokod.ru/comments
 // @include http://www.govnokod.ru/comments
-// @version 1.1.0
+// @version 1.1.1
 // @grant none
 // ==/UserScript==
 
@@ -144,7 +144,8 @@
   function appendLoadButton(error){
     var button = infoBlock('Бесконечный сток', '#cfc');
     if(error) button.append($('<span/>', {text: error}));
-    button.append('<a href="#">Хочу ещё! Загрузить бесконечный сток!</a>');
+    button.append('<a class="bormand-stok" href="#">' +
+      'Хочу ещё! Загрузить бесконечный сток!</a>');
     button.click(onLBClick);
     stokElement().append(button);
   }
