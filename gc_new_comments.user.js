@@ -4,7 +4,7 @@
 // @description Enables user to move between new comments.
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 2.3.0
+// @version 2.3.1
 // @grant none
 // ==/UserScript==
 
@@ -141,6 +141,8 @@ function expandPage(){
   var
     POST_WIDTH     = $('div.entry-content').width(),
     COMMENT_WIDTH  = 0.75 * POST_WIDTH | 0;
+  
+  if(!POST_WIDTH) return;
 
   var $hentry = $('li.hentry');
   var CONTENT_WIDTH = Math.max(
