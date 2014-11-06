@@ -4,7 +4,7 @@
 // @description Enables user to move between new comments.
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 2.3.1
+// @version 2.4.0
 // @grant none
 // ==/UserScript==
 
@@ -18,6 +18,9 @@
   n - возврат на одну позицию из стека
   , - возврат на последнюю позицию из стека
   [ ] - перемещение на комментарии того же уровня
+  b - раскрытие раскрытие поста в стоке или показ комментариев к текущему посту
+  g - открытие поста в новой вкладке
+  
   + - режим сортировки 1: согласно настройкам
   - - режим сортировки 2: по координате x
   0 - режим сортировки 3: по дате
@@ -331,6 +334,12 @@ function allSiblings(){
   return positions(siblings(pos.element));
 }
 
+// ближайший элемент 
+function currentElement(sel){
+  var cur = nearestPosition(positions(sel));
+  return cur && cur.element;
+}
+
 // int main(){ -----------------------------------------------------------------
 
 // увеличиваем страницу по вертикали
@@ -405,8 +414,8 @@ $body.keypress(function(event){
     
     // перемещение на родительский комментарий с запоминанием текущей позиции
     case 'ь': case 'm':
-      var current = nearestPosition(positions('li.hcomment, li.hentry'));
-      var par = parent(current && current.element);
+      var current = currentElement('li.hcomment, li.hentry');
+      var par = parent(current);
       if(par.length){
         children.push(current);
         scrollTo(par);
@@ -421,6 +430,27 @@ $body.keypress(function(event){
     case 'б': case ',':
       scrollTo(children[0]);
       children = [];
+      break;
+    
+    // раскрытие раскрытие поста в стоке или показ комментариев к текущему посту
+    case 'b': case 'и':
+      var current = currentElement('li.hentry');
+      if(!current) break;
+      current.find('a.entry-comments-load,' +
+        'a[text=Все комментарии]:visible, a.show-code-trigger,' +
+        'a.bormand-stok')
+          .first().click();
+      break;
+    
+    // открытие поста в новой вкладке
+    case 'g': case 'п':
+      var current = currentElement('li.hentry');
+      if(!current) break;
+      var href = current.find('a.entry-title:first').attr('href');
+      if(href){
+        window.open(href, '_blank');
+        window.focus(); // не работает :(
+      }
       break;
   }
 });
