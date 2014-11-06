@@ -4,7 +4,7 @@
 // @description Enables user to move between new comments.
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 2.5.3
+// @version 2.5.4
 // @grant none
 // ==/UserScript==
 
@@ -20,7 +20,7 @@
   [ ] - перемещение на комментарии того же уровня
   b - раскрытие поста в стоке или показ комментариев к текущему посту или
         раскрытие бесконечного стока Борманда или
-  g - открытие поста в новой вкладке
+  y - открытие поста в новой вкладке
   
   + - режим сортировки 1: согласно настройкам
   - - режим сортировки 2: по координате x
@@ -31,7 +31,7 @@
     j-k и i-o - вниз-вверх на shift пикселей (одна из настроек)
     h-l и u-p - на начало-конец страницы
   
-  Shift+g - закрытие текущего окна
+  Shift+y - закрытие текущего окна
   Shift+b - открытие формы ответа на текущий комментарий
   
   Скрипт имеет некоторые параметры, которые можно настроить
@@ -418,7 +418,7 @@ $body.keypress(function(event){
         break;
       
       // закрытие текущей вкладки
-      case 'g': case 'п': window.close(); break;
+      case 'y': case 'н': window.close(); break;
 
       // открытие формы ответа на текущий комментарий
       case 'b': case 'и':
@@ -496,7 +496,7 @@ $body.keypress(function(event){
       break;
     
     // открытие поста в новой вкладке
-    case 'g': case 'п':
+    case 'y': case 'н':
       var current = currentElement('li.hentry');
       if(!current) break;
       var href = current.find('a.entry-title:first').attr('href');
