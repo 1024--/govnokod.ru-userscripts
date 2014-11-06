@@ -4,7 +4,7 @@
 // @description Enables user to move between entries.
 // @exclude http://govnokod.ru/*
 // @include http://*
-// @version 1.0.0
+// @version 1.0.1
 // @grant none
 // ==/UserScript==
 
@@ -22,6 +22,9 @@
 */
 
 (function(){
+var $ = window.$ || window.jQuery;
+if(!$) return;
+
 var $html = $('html');
 var $body = $('body');
 var $page = $('body, html');
