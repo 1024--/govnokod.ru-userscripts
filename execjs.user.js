@@ -4,7 +4,7 @@
 // @description Добавляет скриптам кнопку "Выполнить"
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 0.0.1
+// @version 0.0.2
 // @grant none
 // ==/UserScript==
 
@@ -13,6 +13,9 @@ $('li.hentry:has(a[rel=chapter][text=JavaScript])').each(function(){
       result = $('<pre id="result">...</pre>');
   
   var execute = $('<a href="#">Выполнить</a>').click(function(){
+    alert('Выполнять всякую хрень опасно!');
+    return false;
+    
     var code = entry.find('div.entry-content>pre');
     try {
       result.text('Успех: ' + String(eval(code.text())));
