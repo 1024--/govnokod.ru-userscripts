@@ -3,7 +3,7 @@
 // @namespace userscripts_1024__
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.1.0
+// @version 1.1.1
 // @grant none
 // ==/UserScript==
 
@@ -20,7 +20,7 @@ var buttons = [
   ['[URL]', '[color=blue][u]xxx[/u][/color]'],
   ['[big]', '[size=20]xxx[/size]'],
   ['[small]', '[size=10]xxx[/size]'],
-  ['[code]', '[code]xxx[code]'],
+  ['[code]', '[code]xxx[/code]'],
   ['[spoiler]', '[color=white]xxx[/color]'],
   ['[fatroll]',
               '[size=20][color=green][u][color=red][s][color=blue][b][i]xxx' +
