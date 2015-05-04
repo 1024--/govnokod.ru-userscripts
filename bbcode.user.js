@@ -3,7 +3,7 @@
 // @namespace userscripts_1024__
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.1.4
+// @version 1.1.5
 // @grant none
 // ==/UserScript==
 
@@ -29,6 +29,7 @@ var buttons = [
       var s = window.getSelection();
       var quote = String(s).replace(/\r\n|\r|\n|^/g, '$&>> ') + '\n';
       
+      if(!s.anchorNode) return '';
       if($(s.anchorNode).closest('li.hcomment')
         .children('ul').children('li').children('form').length)
         return quote;
