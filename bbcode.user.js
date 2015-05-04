@@ -3,7 +3,7 @@
 // @namespace userscripts_1024__
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.1.2
+// @version 1.1.3
 // @grant none
 // ==/UserScript==
 
@@ -26,8 +26,17 @@ var buttons = [
               '[size=20][color=green][u][color=red][s][color=blue][b][i]xxx' +
               '[/i][/b][/color][/s][/color][/u][/color][/size]'],
   ['[quote]', function(sel){
-      return String(window.getSelection())
-        .replace(/\r\n|\r|\n|^/g, '$&>> ') + '\n';
+      var s = window.getSelection();
+      var quote = String(s).replace(/\r\n|\r|\n|^/g, '$&>> ') + '\n';
+      
+      if($(s.anchorNode).closest('li.hcomment')
+        .children('ul').children('li').children('form').length)
+        return quote;
+      
+      var comment = $(s.anchorNode).closest('div.entry-comment-wrapper');
+      return '[b]' + comment.find('.entry-author>a').text() + '[/b] в ' +
+        '[color=blue][u]' + comment.find('a.comment-link').attr('href') +
+        '[/u][/color] написал:\n' + quote;
   }],
   // ['[capsbold]', function(sel){
     // return '[b]' + sel.toUpperCase() + '[/b]';
@@ -51,7 +60,8 @@ function appendButtons() {
     button.innerHTML = name;
     button.className = 'userscript-1024--bb-code';
     button.href = '#';
-    button.title = code;
+    if(typeof code !== 'function') button.title = code;
+    
     button.addEventListener('click', function(event){
       var start = comment.selectionStart, end = comment.selectionEnd;
       var pre = comment.value.substring(0, start);
