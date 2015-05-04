@@ -3,7 +3,7 @@
 // @namespace userscripts_1024__
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.1.5
+// @version 1.1.6
 // @grant none
 // ==/UserScript==
 
@@ -17,7 +17,11 @@ var buttons = [
   ['[<i>I</i>]', '[i]xxx[/i]'],
   ['[<s>S</s>]', '[s]xxx[/s]'],
   ['[<u>U</u>]', '[u]xxx[/u]'],
-  ['[URL]', '[color=blue][u]xxx[/u][/color]'],
+  ['[URL]', function(sel){
+      return '[color=blue][u]' +
+        sel.replace(/\S{30}/g, '$&[i][/i]') +
+        '[/u][/color]';
+  }],
   ['[big]', '[size=20]xxx[/size]'],
   ['[small]', '[size=10]xxx[/size]'],
   ['[code]', '[code]xxx[/code]'],
