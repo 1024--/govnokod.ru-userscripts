@@ -3,7 +3,7 @@
 // @namespace userscripts_1024__
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.0.0
+// @version 1.0.1
 // @grant none
 // ==/UserScript==
 
@@ -28,34 +28,40 @@ var buttons = [
   ['', '']
 ];
 
-var comment = document.querySelector('textarea#formElm_text');
-var info = document.querySelector('div.field-info');
+function appendButtons() {
+  var comment = document.querySelector('textarea#formElm_text');
+  var info = document.querySelector('div.field-info');
 
-if(!comment || !info) return;
-
-buttons.forEach(function(b){
-  var name = b[0], code = b[1];
-  var button = document.createElement('a');
-  button.innerHTML = name;
-  button.href = '#';
-  button.title = code;
-  button.addEventListener('click', function(event){
-    var start = comment.selectionStart, end = comment.selectionEnd;
-    var pre = comment.value.substring(0, start);
-    var sel = comment.value.substring(start, end);
-    var post = comment.value.substring(end);
-    
-    var newSel = code.replace('xxx', sel);
-    comment.value = pre + newSel + post;
-    comment.selectionStart = comment.selectionEnd =
-      pre.length + code.replace(/xxx.*$/,'').length + sel.length;
-    comment.focus();
-    
-    event.preventDefault();
-  });
+  if(!comment || !info) return;
+  if(info.querySelector('.userscript-1024--bb-code')) return;
   
-  info.appendChild(document.createTextNode(' '));
-  info.appendChild(button);
-});
+  buttons.forEach(function(b){
+    var name = b[0], code = b[1];
+    var button = document.createElement('a');
+    button.innerHTML = name;
+    button.className = 'userscript-1024--bb-code';
+    button.href = '#';
+    button.title = code;
+    button.addEventListener('click', function(event){
+      var start = comment.selectionStart, end = comment.selectionEnd;
+      var pre = comment.value.substring(0, start);
+      var sel = comment.value.substring(start, end);
+      var post = comment.value.substring(end);
+      
+      var newSel = code.replace('xxx', sel);
+      comment.value = pre + newSel + post;
+      comment.selectionStart = comment.selectionEnd =
+        pre.length + code.replace(/xxx.*$/,'').length + sel.length;
+      comment.focus();
+      
+      event.preventDefault();
+    });
+    
+    info.appendChild(document.createTextNode(' '));
+    info.appendChild(button);
+  });
+}
+
+$('a.answer, h3>a').live('click', appendButtons);
 
 })();
