@@ -3,13 +3,15 @@
 // @namespace userscripts_1024__
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.1.6
+// @version 1.2.0
 // @grant none
 // ==/UserScript==
 
 (function(){
 
 // Описание кнопок в формате ["что написано на кнопке", "что оно сделает с xxx"]
+// или ["что написано на кнопке", функция, возвращающая строку
+// или [строку, позицию курсора относительно начала этой строки]"]
 // Можно добавить свои :)
 var buttons = [
   ['<span style="color: green">[G]</span>', '[color=green]xxx[/color]'],
@@ -18,9 +20,9 @@ var buttons = [
   ['[<s>S</s>]', '[s]xxx[/s]'],
   ['[<u>U</u>]', '[u]xxx[/u]'],
   ['[URL]', function(sel){
-      return '[color=blue][u]' +
-        sel.replace(/\S{30}/g, '$&[i][/i]') +
-        '[/u][/color]';
+      sel = sel.replace(/\S{30}/g, '$&[i][/i]');
+      var pre = '[color=blue][u]', post = '[/u][/color]';
+      return [pre + sel + post, pre.length + sel.length];
   }],
   ['[big]', '[size=20]xxx[/size]'],
   ['[small]', '[size=10]xxx[/size]'],
@@ -33,7 +35,7 @@ var buttons = [
       var s = window.getSelection();
       var quote = String(s).replace(/\r\n|\r|\n|^/g, '$&>> ') + '\n';
       
-      if(!s.anchorNode) return '';
+      if(!s.anchorNode) return ['', 0];
       if($(s.anchorNode).closest('li.hcomment')
         .children('ul').children('li').children('form').length)
         return quote;
@@ -44,7 +46,8 @@ var buttons = [
         '[/u][/color] написал:\n' + quote;
   }],
   // ['[capsbold]', function(sel){
-    // return '[b]' + sel.toUpperCase() + '[/b]';
+    // sel = sel.toUpperCase();
+    // return ['[b]' + sel + '[/b]', '[b]'.length + sel.length];
   // }]
 ];
 
@@ -74,11 +77,18 @@ function appendButtons() {
       var sel = comment.value.substring(start, end);
       var post = comment.value.substring(end);
       
-      var newSel = action(sel);
+      var res = action(sel), newSel, pos;
+      if(typeof res === 'string') {
+        newSel = res;
+        pos = res.length;
+      } else {
+        newSel = res[0];
+        pos = res[1];
+      }
       comment.value = pre + newSel + post;
       comment.selectionStart = comment.selectionEnd =
         typeof code === 'function' ?
-          pre.length + newSel.length :
+          pre.length + pos :
           pre.length + code.replace(/xxx.*$/,'').length + sel.length;
       comment.focus();
       
