@@ -3,7 +3,7 @@
 // @namespace userscripts_1024__
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.1.3
+// @version 1.1.4
 // @grant none
 // ==/UserScript==
 
@@ -48,7 +48,9 @@ function appendButtons() {
   var info = comment.parentNode;
 
   if(!comment || !info) return;
-  if(info.querySelector('.userscript-1024--bb-code')) return;
+  if(info.querySelector('div.userscript-1024--bb-code')) return;
+  var container = document.createElement('div');
+  container.className = 'userscript-1024--bb-code';
   
   buttons.forEach(function(b){
     var name = b[0], code = b[1];
@@ -58,7 +60,6 @@ function appendButtons() {
     
     var button = document.createElement('a');
     button.innerHTML = name;
-    button.className = 'userscript-1024--bb-code';
     button.href = '#';
     if(typeof code !== 'function') button.title = code;
     
@@ -79,11 +80,14 @@ function appendButtons() {
       event.preventDefault();
     });
     
-    info.appendChild(document.createTextNode(' '));
-    info.appendChild(button);
+    container.appendChild(document.createTextNode(' '));
+    container.appendChild(button);
   });
+  
+  info.appendChild(container);
 }
 
 $('a.answer, h3>a').live('click', appendButtons);
+$(document).ajaxComplete(appendButtons);
 
 })();
