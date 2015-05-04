@@ -3,7 +3,7 @@
 // @namespace userscripts_1024__
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.0.2
+// @version 1.0.3
 // @grant none
 // ==/UserScript==
 
@@ -23,9 +23,8 @@ var buttons = [
   ['[code]', '[code]xxx[code]'],
   ['[spoiler]', '[color=white]xxx[/color]'],
   ['[fatroll]',
-              '[size=20][color=green][u][color=red][s][color=blue]xxx' +
-              '[/color][/s][/color][/u][/color][/size]'],
-  ['', '']
+              '[size=20][color=green][u][color=red][s][color=blue][b][i]xxx' +
+              '[/i][/b][/color][/s][/color][/u][/color][/size]']
 ];
 
 function appendButtons() {
