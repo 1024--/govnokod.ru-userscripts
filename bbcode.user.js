@@ -3,7 +3,7 @@
 // @namespace userscripts_1024__
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.0.1
+// @version 1.0.2
 // @grant none
 // ==/UserScript==
 
@@ -30,7 +30,7 @@ var buttons = [
 
 function appendButtons() {
   var comment = document.querySelector('textarea#formElm_text');
-  var info = document.querySelector('div.field-info');
+  var info = comment.parentNode;
 
   if(!comment || !info) return;
   if(info.querySelector('.userscript-1024--bb-code')) return;
