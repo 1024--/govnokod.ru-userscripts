@@ -3,7 +3,7 @@
 // @namespace userscripts_1024__
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.0.3
+// @version 1.1.0
 // @grant none
 // ==/UserScript==
 
@@ -24,7 +24,13 @@ var buttons = [
   ['[spoiler]', '[color=white]xxx[/color]'],
   ['[fatroll]',
               '[size=20][color=green][u][color=red][s][color=blue][b][i]xxx' +
-              '[/i][/b][/color][/s][/color][/u][/color][/size]']
+              '[/i][/b][/color][/s][/color][/u][/color][/size]'],
+  ['[quote]', function(sel){
+      return '>> ' + String(window.getSelection()) + '\n';
+  }],
+  // ['[capsbold]', function(sel){
+    // return '[b]' + sel.toUpperCase() + '[/b]';
+  // }]
 ];
 
 function appendButtons() {
@@ -36,6 +42,10 @@ function appendButtons() {
   
   buttons.forEach(function(b){
     var name = b[0], code = b[1];
+    var action = typeof code === 'function' ? code : function(sel){
+      return code.replace('xxx', sel);
+    };
+    
     var button = document.createElement('a');
     button.innerHTML = name;
     button.className = 'userscript-1024--bb-code';
@@ -47,10 +57,12 @@ function appendButtons() {
       var sel = comment.value.substring(start, end);
       var post = comment.value.substring(end);
       
-      var newSel = code.replace('xxx', sel);
+      var newSel = action(sel);
       comment.value = pre + newSel + post;
       comment.selectionStart = comment.selectionEnd =
-        pre.length + code.replace(/xxx.*$/,'').length + sel.length;
+        typeof code === 'function' ?
+          pre.length + newSel.length :
+          pre.length + code.replace(/xxx.*$/,'').length + sel.length;
       comment.focus();
       
       event.preventDefault();
