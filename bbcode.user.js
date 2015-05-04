@@ -3,7 +3,7 @@
 // @namespace userscripts_1024__
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.1.1
+// @version 1.1.2
 // @grant none
 // ==/UserScript==
 
@@ -26,7 +26,8 @@ var buttons = [
               '[size=20][color=green][u][color=red][s][color=blue][b][i]xxx' +
               '[/i][/b][/color][/s][/color][/u][/color][/size]'],
   ['[quote]', function(sel){
-      return '>> ' + String(window.getSelection()) + '\n';
+      return String(window.getSelection())
+        .replace(/\r\n|\r|\n|^/g, '$&>> ') + '\n';
   }],
   // ['[capsbold]', function(sel){
     // return '[b]' + sel.toUpperCase() + '[/b]';
