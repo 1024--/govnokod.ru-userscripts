@@ -2,6 +2,8 @@
 Позволят вам стать немножечко счастливее.  
 Список скриптов от пользователей ГК смотрите [на форуме](http://gvforum.ru/viewtopic.php?id=1173).
 
+Пользователю потребуется относительно свежий браузер Firefox или Chrome с установленным расширением для исполнения скриптов. Для Firefox - [Greasemonkey](https://addons.mozilla.org/ru/firefox/addon/greasemonkey/), для Chrome - [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo).
+
 ####[Улучшенная навигация по комментариям](gc_new_comments.user.js)
   Скрипт реализует перемещение по новым/соседним/всем комментариям по хоткеям;
   перемещение в порядке по дате/положению комментария на странице;
