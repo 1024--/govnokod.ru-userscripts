@@ -3,7 +3,7 @@
 // @namespace userscripts_1024__
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.2.0
+// @version 1.2.1
 // @grant none
 // ==/UserScript==
 
@@ -41,6 +41,7 @@ var buttons = [
         return quote;
       
       var comment = $(s.anchorNode).closest('div.entry-comment-wrapper');
+      if(!comment.length) return quote;
       return '[b]' + comment.find('.entry-author>a').text() + '[/b] в ' +
         '[color=blue][u]' + comment.find('a.comment-link').attr('href') +
         '[/u][/color] написал:\n' + quote;
