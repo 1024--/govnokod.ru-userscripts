@@ -4,7 +4,7 @@
 // @description Logs changed topics.
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.3.0
+// @version 2.0.0
 // @grant none
 // ==/UserScript==
 
@@ -53,6 +53,87 @@
     return obj;
   }
   
+  function Range(first, last) {
+    this.first = first;
+    this.last = last;
+    this.range = [];
+  }
+  
+  Range.prototype.pack = function() {
+    this.reduce();
+    var packed = String(this.first) + ':' +
+                 String(this.last) + ':' +
+                 String(this.range.length) + ':';
+    var b = 0;
+    for(var i=0; i<this.range.length; ++i) {
+      if(i % 8 === 0 && i > 0) {
+        packed += String.fromCharCode(b);
+        b = 0;
+      }
+      b <<= 1;
+      b += Number(this.range[i]);
+    }
+    if(i > 0) {
+      while(i % 8 !== 0) {
+        b <<= 1;
+        ++ i;
+      }
+      packed += String.fromCharCode(b);
+    }
+    return packed;
+  };
+  
+  Range.fromString = function(packed) {
+    var range = new Range(0,0);
+    var m = packed.match(/^(\d+):(\d+):(\d+):/);
+    if(!m) return range;
+    range.first = Number(m[1]);
+    range.last = Number(m[2]);
+    var r = Array(Number(m[3])), b;
+    for(var i=m[0].length, j=0; j<r.length; ++j) {
+      if(j % 8 === 0) {
+        b = packed.charCodeAt(i);
+        ++ i;
+      }
+      r[j] = Boolean(b & 128);
+      b <<= 1;
+    }
+    range.range = r;
+    return range;
+  };
+  
+  Range.prototype.reduce = function() {
+    var i = 0, j = this.range.length;
+    while(i < this.range.length && this.range[i] === true) ++ i;
+    while(j > 0 && this.range[j - 1] === false) -- j;
+    if(i === 0 && j === this.range.length) return;
+    this.first += i;
+    this.range = this.range.slice(i, j);
+  };
+  
+  Range.prototype.set = function(i, value) {
+    if(i < this.first) return;
+    if(i >= this.last) this.last = i+1;
+    if(i - this.first >= this.range.length) {
+      for(var j = this.range.length; j <= i - this.first; ++ j)
+        this.range[j] = false;
+    }
+    this.range[i - this.first] = Boolean(value);
+  };
+  
+  Range.prototype.get = function(i) {
+    if(i < this.first) return true;
+    if(i - this.first >= this.range.length) return false;
+    return this.range[i - this.first];
+  };
+  
+  Range.prototype.forEach = function(f) {
+    for(var i=0; i<this.range.length; ++i)
+      f(i + this.first, this.range[i]);
+    for(var i=this.range.length+this.first; i<this.last; ++i)
+      f(i, false);
+  };
+    
   function appendPosts($from, posts){
     $from.find('a.entry-title').each(function(_,x){
       var link = x.href.match(/\d+$/);
@@ -70,7 +151,7 @@
   switch(location.pathname){
   
   case '/user/login':
-    if(!ls.getItem(SCRIPT_ID + 'posts')) break;
+    if(!ls.getItem(SCRIPT_ID + 'time')) break;
     
     var deletePosts = document.createElement('a');
     deletePosts.href = '#';
@@ -85,6 +166,24 @@
       event.preventDefault();
     });
     
+    var clearVisited = document.createElement('a');
+    clearVisited.href = '#';
+    clearVisited.innerHTML = 'очистить';
+    
+    clearVisited.addEventListener('click', function(event){
+      if(confirm('Вы действительно хотите сбросить счётчик просмотренных?')){
+        ls.setItem(SCRIPT_ID + 'visited', (new Range(visited.last, visited.last)).pack());
+        $('.user-changed-posts').remove();
+      }
+      event.preventDefault();
+    });
+    
+    var empty = '', visited = Range.fromString(ls.getItem(SCRIPT_ID + 'visited') || '');
+    visited.forEach(function(i, visited) {
+      if(!visited) empty += '<a href="/' + i + '">' + i + '</a> ';
+    });
+    empty += '[<a href="/' + visited.last + '">' + visited.last + '</a>]';
+    
     $('li.hentry')
       .append('<div class="user-changed-posts"><br/>Изменённые посты с ' +
         (new Date(+ls.getItem(SCRIPT_ID + 'time'))).toLocaleString() +
@@ -93,6 +192,19 @@
         '"</tt> </div>')
       .find('.user-changed-posts')
       .append(deletePosts);
+    
+    if(visited.first === visited.last)
+      $('li.hentry')
+        .append('<div class="user-visited-posts">Просмотрено: [1; ' + visited.first + ') </div>');
+    else
+      $('li.hentry')
+        .append('<div class="user-visited-posts">Просмотрено: [1; ' + visited.first +
+                '), имеется дыра на [' + visited.first + '; ' + visited.last + ') </div>')
+        .find('.user-visited-posts')
+        .append(clearVisited);
+    
+    $('li.hentry')
+      .append('<div class="user-visited-posts">Непосещённые: <tt>' + empty + '</tt></div>')
     break;
     
   case '/comments':
@@ -107,6 +219,13 @@
     appendPosts($('.entry-comments-new').parents('li.hentry'), posts);
     
     ls.setItem(SCRIPT_ID + 'posts', pack(posts));
+    
+    var visited = Range.fromString(ls.getItem(SCRIPT_ID + 'visited') || '');
+    var post = location.pathname.match(/^\/(\d+)/);
+    if(post && $('li.hentry>.entry-content:first').length) {
+      visited.set(+post[1], true);
+      ls.setItem(SCRIPT_ID + 'visited', visited.pack());
+    }
     break;
   }
   
