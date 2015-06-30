@@ -4,7 +4,7 @@
 // @description Logs changed topics.
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 2.0.0
+// @version 2.0.1
 // @grant none
 // ==/UserScript==
 
@@ -179,6 +179,8 @@
     });
     
     var empty = '', visited = Range.fromString(ls.getItem(SCRIPT_ID + 'visited') || '');
+    var last = String(ls.getItem(SCRIPT_ID + 'posts')).match(/\d+$/);
+    if(last) visited.set(+last[0], visited.get(+last[0]));
     visited.forEach(function(i, visited) {
       if(!visited) empty += '<a href="/' + i + '">' + i + '</a> ';
     });
