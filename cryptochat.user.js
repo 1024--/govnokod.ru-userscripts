@@ -3,7 +3,7 @@
 // @namespace govnokod
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 0.0.7
+// @version 0.0.8
 // @grant none
 // ==/UserScript==
 
@@ -174,11 +174,18 @@
           $this.append('<br/>');
           return;
         }
+        if(!/^\[?AES:.+?:/.test(part)) {
+          $this.append(document.createTextNode(part));
+          return;
+        }
         
         var decr = decrypt(part[0] === '[' ?
           part.substring(1,part.length-1) : part, keys);
         
-        if(decr == null) $this.append(document.createTextNode(part));
+        if(decr == null) $this
+          .append($('<span style="color: #8080ff">██████</span>')
+            .attr('title', 'исходный текст: "' + part + '"')
+          .append($('<sup style="color: #fbb">нет ключа</sup>')));
         else $this
           .append($('<span style="color: #8080ff"></span>')
             .attr('title', 'расшифровано с помощью "' + decr.key + '"')
