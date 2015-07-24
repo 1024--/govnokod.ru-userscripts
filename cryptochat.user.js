@@ -3,7 +3,7 @@
 // @namespace govnokod
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 0.0.9
+// @version 0.0.10
 // @grant none
 // ==/UserScript==
 
@@ -118,6 +118,7 @@
   }
   
   var keys, currentKey, DHkey, DHprime, Dhgen;
+  var options = {};
   
   function reloadKeys() {
     keys = loadKeys().split(':').map(function(key){
@@ -181,15 +182,22 @@
         
         var decr = decrypt(part, keys);
         
-        if(decr == null) $this
-          .append($('<span style="color: #8080ff">██████</span>')
+        if(decr == null) {
+          $('<span style="color: ' + options['decr-color'] + '">██████</span>')
             .attr('title', 'исходный текст: "' + part + '"')
-          .append($('<sup style="color: #fbb">нет ключа</sup>')));
-        else $this
-          .append($('<span style="color: #8080ff"></span>')
+            .appendTo($this);
+          if(options['show-key-name'] != '0')
+            $this.append($('<sup style="color: ' + options['key-color'] +
+              '">нет ключа</sup>'));
+        } else {
+          $('<span style="color: ' + options['decr-color'] + '"></span>')
             .attr('title', 'расшифровано с помощью "' + decr.key + '"')
-            .text(decr.text))
-          .append($('<sup style="color: #ccc">' + decr.key +'</sup>'));
+            .text(decr.text)
+            .appendTo($this);
+          if(options['show-key-name'] != '0')
+            $this.append($('<sup style="color: ' + options['key-color'] +
+              '">' + decr.key +'</sup>'));
+        }
       });
     });
   }
@@ -205,6 +213,36 @@
       keySelector.append('<option value="' + i + '" ' + (i?'':'selected') +
         '>' + k + '</option>');
     });
+  }
+  
+  function reloadOptions(){
+    var defaults = {
+      'key-color': '#ccc',
+      'decr-color': '#8080ff',
+      'show-key-name': '1',
+    };
+    
+    for(var n in defaults)
+      if(defaults.hasOwnProperty(n))
+        options[n] = defaults[n];
+    
+    (localStorage.getItem(ID + 'options') || '').split(/\s*,\s*/).forEach(function(prop){
+      var p = prop.split('=');
+      if(p.length != 2) return;
+      options[p[0]] = p[1];
+    });
+  }
+  
+  function getOptions(){
+    var opts = [];
+    for(var n in options)
+      if(options.hasOwnProperty(n))
+        opts.push(n + '=' + options[n]);
+    return opts.join(',');
+  }
+  
+  function saveOptions(opts) {
+    localStorage.setItem(ID + 'options', opts);
   }
   
   function appendPanel() {
@@ -312,8 +350,13 @@
     if(!loadDHKey()) saveDHKey(createKey(2048));
     reloadKeys();
     reloadDHKey();
+    reloadOptions();
     appendPanel();
     decryptComments();
+    
+    showKeyName = localStorage.getItem(ID + 'show-name');
+    keyColor = localStorage.getItem(ID + 'key-color');
+    decryptedColor = localStorage.getItem(ID + 'decr-color');
     
     $('a.answer, h3>a').live('click', appendPanel);
     $(document).ajaxComplete(appendPanel).ajaxComplete(decryptComments);
@@ -375,6 +418,18 @@
         if(key == null) return false;
         saveDHKey(key);
         reloadDHKey();
+        return false;
+      }));
+    
+    configDialog.append('<br/>');
+
+    configDialog.append($('<a href="#">Опции</a>')
+      .click(function(event){
+        var opts = prompt('Введите опции или нажмите Esc для отмены.\n' +
+        'Опции обновятся после перезагрузки страницы.', getOptions());
+        if(opts == null) return false;
+        saveOptions(opts);
+        reloadOptions();
         return false;
       }));
     
