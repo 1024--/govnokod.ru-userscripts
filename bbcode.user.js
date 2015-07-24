@@ -3,7 +3,7 @@
 // @namespace userscripts_1024__
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.2.1
+// @version 1.2.2
 // @grant none
 // ==/UserScript==
 
@@ -103,6 +103,7 @@ function appendButtons() {
   info.appendChild(container);
 }
 
+appendButtons();
 $('a.answer, h3>a').live('click', appendButtons);
 $(document).ajaxComplete(appendButtons);
 
