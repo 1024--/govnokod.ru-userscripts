@@ -3,7 +3,7 @@
 // @namespace govnokod
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 0.0.10
+// @version 0.0.11
 // @grant none
 // ==/UserScript==
 
@@ -149,6 +149,33 @@
   function saveDHKey(key) {
     localStorage.setItem(ID + 'DHkey', key);
   }
+  
+  function addDHkey(keyString, keyComment) {
+    var m = keyString.match(/\[DHKEY:(.+?):([A-Fa-f0-9\s]+)\]/);
+    if(!m) {
+      alert('Ключ не найден. Захватите выделением строку вида [DHKEY:1:PITUX]');
+      return;
+    }
+    
+    if(m[1] != '1') {
+      alert('Неизвестная версия ' + m[1] + '.');
+      return;
+    }
+    
+    var publicKey = m[2].replace(/\s+/g, '');
+
+    var secret = powMod(str2bigInt(publicKey, 16, 2048, 256), DHkey, DHprime);
+    var salt = CryptoJS.lib.WordArray.create();
+    var key = CryptoJS.PBKDF2(bigInt2str(secret, 16), salt, { keySize: 256/32 }).toString();
+        
+    key = prompt('Такой ключ будет добавлен в список ключей для шифрования.\n' +
+      'Вы можете отредактировать ключ или его описание.\n' +
+      'Или нажать Esc для отмены добавления.', '(' + keyComment + ')' + key);
+    if(key == null) return false;
+    
+    saveKeys(loadKeys() + ':' + key);
+    reloadKeys();
+  }
 
   function coolSplit(str, pattern) {
     var result = [];
@@ -168,13 +195,30 @@
     $('span.comment-text').each(function(){
       var $this = $(this);
       var text = $this.text();
-      if(!/AES:/.test(text)) return;
+      if(!/AES:|DHKEY:/.test(text)) return;
       $this.empty();
-      coolSplit(text, /\[AES:.+?\]|\n|^AES:.+$/).forEach(function(part, i) {
+      coolSplit(text, /\[AES:.+?\]|\[DHKEY:.+?\]|\n|^AES:.+$/).forEach(function(part, i) {
         if(part === '\n') {
           $this.append('<br/>');
           return;
         }
+        if(/^\[DHKEY:.+?:.+?\]$/.test(part)) {
+          $('<a href="#">DH: принять публичный ключ</a>')
+            .attr('title', part)
+            .click(function(){
+              var comment = $this.closest('div.entry-comment-wrapper');
+              var keyComment = 'DH|new-key';
+              
+              if(comment.length)
+                keyComment = 'DH|' + comment.find('.entry-author>a').text();
+              
+              addDHkey(part, keyComment);
+              return false;
+            })
+            .appendTo($this);
+           return;
+        }
+        
         if(!/^\[?AES:.+?:/.test(part)) {
           $this.append(document.createTextNode(part));
           return;
@@ -281,42 +325,20 @@
     });
     
     var DH2Button = $('<a href="#">[DH:принять]</a>').click(function(event){
-      var s = window.getSelection(), keyString = String(s), publicKey, keyComment = 'DH|new-key';
+      var s = window.getSelection(), keyString = String(s), keyComment = 'DH|new-key';
       
       if(!keyString) {
-        publicKey = prompt('Введите публичный ключ того, с кем хотите поговорить.\n' +
+        keyString = prompt('Введите публичный ключ того, с кем хотите поговорить в формате [DHKEY:1:PITUX].\n' +
           'Вы также можете выделить текст его комментария с ключом, ' +
           'чтобы была захвачена строка вида [DHKEY:1:PITUX] и снова нажать на [DH|принять].');
-        if(publicKey == null) return false;
-        publicKey = publicKey.replace(/^DHKEY:.+?:|\s+/g, '');
+        if(keyString == null) return false;
       } else {
-        var m = keyString.match(/\[DHKEY:(.+?):([A-Fa-f0-9\s]+)\]/);
-        if(!m) {
-          alert('Ключ не найден. Захватите выделением строку вида [DHKEY:1:PITUX]');
-          return false;
-        }
-        if(m[1] != '1') {
-          alert('Неизвестная версия ' + m[1] + '.');
-          return false;
-        }
-        publicKey = m[2].replace(/\s+/g, '');
-
         var comment = $(s.anchorNode).closest('div.entry-comment-wrapper');
         if(comment.length)
           keyComment = 'DH|' + comment.find('.entry-author>a').text();
       }
       
-      var secret = powMod(str2bigInt(publicKey, 16, 2048, 256), DHkey, DHprime);
-      var salt = CryptoJS.lib.WordArray.create();
-      var key = CryptoJS.PBKDF2(bigInt2str(secret, 16), salt, { keySize: 256/32 }).toString();
-      
-      key = prompt('Такой ключ будет добавлен в список ключей для шифрования.\n' +
-      'Вы можете отредактировать ключ или его описание.\n' +
-      'Или нажать Esc для отмены добавления.', '(' + keyComment + ')' + key);
-      if(key == null) return false;
-      saveKeys(loadKeys() + ':' + key);
-      reloadKeys();
-      
+      addDHkey(keyString, keyComment);
       return false;
     });
 
