@@ -3,7 +3,7 @@
 // @namespace govnokod
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 0.0.11
+// @version 0.0.12
 // @grant none
 // ==/UserScript==
 
@@ -192,7 +192,7 @@
   }
   
   function decryptComments() {
-    $('span.comment-text').each(function(){
+    $('div.entry-comment').each(function(){
       var $this = $(this);
       var text = $this.text();
       if(!/AES:|DHKEY:/.test(text)) return;
