@@ -3,7 +3,7 @@
 // @namespace govnokod
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 0.0.6
+// @version 0.0.7
 // @grant none
 // ==/UserScript==
 
@@ -98,9 +98,10 @@
     var iv_txt = createKey(key.key.sigBytes * 8);
     var iv = CryptoJS.enc.Hex.parse(iv_txt);
     
-    return 'AES:1:' + 
+    return '[AES:1:' + 
       iv_txt + ':' +
-      String(CryptoJS.AES.encrypt(checksum(text) + text, key.key, { iv: iv }));
+      String(CryptoJS.AES.encrypt(checksum(text) + text, key.key, { iv: iv })) +
+      ']';
   }
   
   function createKey(N){
@@ -147,16 +148,35 @@
   function saveDHKey(key) {
     localStorage.setItem(ID + 'DHkey', key);
   }
+
+  function coolSplit(str, pattern) {
+    var result = [];
+    while(1){
+      var m = str.match(pattern);
+      if(!m) {
+        if(str) result.push(str);
+        return result;
+      }
+      if(m.index) result.push(str.substr(0, m.index));
+      result.push(str.substr(m.index, m[0].length));
+      str = str.substr(m.index + m[0].length);
+    }
+  }
   
   function decryptComments() {
     $('span.comment-text').each(function(){
       var $this = $(this);
       var text = $this.text();
-      if(!/^AES:/.test(text)) return;
+      if(!/AES:/.test(text)) return;
       $this.empty();
-      text.split('\n').forEach(function(part, i) {
-        var decr = decrypt(part, keys);
-        if(i) $this.append('<br/>');
+      coolSplit(text, /\[AES:.+?\]|\n|^AES:.+$/).forEach(function(part, i) {
+        if(part === '\n') {
+          $this.append('<br/>');
+          return;
+        }
+        
+        var decr = decrypt(part[0] === '[' ?
+          part.substring(1,part.length-1) : part, keys);
         
         if(decr == null) $this.append(document.createTextNode(part));
         else $this
