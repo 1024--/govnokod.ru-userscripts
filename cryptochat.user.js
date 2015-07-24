@@ -3,7 +3,7 @@
 // @namespace govnokod
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 0.0.3
+// @version 0.0.4
 // @grant none
 // ==/UserScript==
 
@@ -13,16 +13,26 @@
 (function(){
   
   var ID = 'dbdf6b41-e08a-4046-809f-50f513fd0756';
-
-  var AESscript = document.createElement('script');
-  AESscript.src = 'http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/aes.js';
-  document.body.appendChild(AESscript);
   
-  AESscript.onload = init;
+  function SumHandler(n, cb) {
+    return function(){
+      console.log('SumHandler: ' + (n-1));
+      if(!--n) cb();
+    };
+  }
   
-  AESscript.onerror = function(){
-    alert('Cryptochat: cannot load crypto-js');
-  };
+  function loadScript(url, sumHandler) {
+    var script = document.createElement('script');
+    script.src = url;
+    document.body.appendChild(script);
+    
+    script.addEventListener('load', sumHandler);
+    script.addEventListener('error', function(){
+      setTimeout(function(){
+        loadScript(url, sumHandler);
+      }, 1000);
+    });
+  }
   
   function checksum(text) {
     var cs = 0;
@@ -211,6 +221,7 @@
     
     if(!loadKeys()) saveKeys('(automatic)' + createKey());
     reloadKeys();
+    appendPanel();
     decryptComments();
     
     $('a.answer, h3>a').live('click', appendPanel);
@@ -253,4 +264,7 @@
     
   }
   
+  var handler = SumHandler(1, init);
+  loadScript('http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/aes.js', handler);
+
 })();
