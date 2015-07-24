@@ -3,7 +3,7 @@
 // @namespace govnokod
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 0.0.12
+// @version 0.0.13
 // @grant none
 // ==/UserScript==
 
@@ -196,6 +196,10 @@
       var $this = $(this);
       var text = $this.text();
       if(!/AES:|DHKEY:/.test(text)) return;
+      
+      if($this.find('span.hidden-text'))
+        text = text.replace(/^показать все, что скрыто/, '');
+      
       $this.empty();
       coolSplit(text, /\[AES:.+?\]|\[DHKEY:.+?\]|\n|^AES:.+$/).forEach(function(part, i) {
         if(part === '\n') {
