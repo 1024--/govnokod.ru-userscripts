@@ -3,7 +3,7 @@
 // @namespace govnokod
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 0.0.5
+// @version 0.0.6
 // @grant none
 // ==/UserScript==
 
@@ -212,7 +212,7 @@
     
     var DH1Button = $('<a href="#">[DH:вставить]</a>').click(function(event){
       var publicKey = powMod(DHgen, DHkey, DHprime);
-      comment.val(comment.val() + 'DHKEY:1:' + bigInt2str(publicKey, 16));
+      comment.val(comment.val() + '[DHKEY:1:' + bigInt2str(publicKey, 16) + ']');
       event.preventDefault();
     });
     
@@ -222,20 +222,20 @@
       if(!keyString) {
         publicKey = prompt('Введите публичный ключ того, с кем хотите поговорить.\n' +
           'Вы также можете выделить текст его комментария с ключом, ' +
-          'чтобы была захвачена строка вида DHKEY:1:PITUX и снова нажать на [DH|принять].');
+          'чтобы была захвачена строка вида [DHKEY:1:PITUX] и снова нажать на [DH|принять].');
         if(publicKey == null) return false;
-        publicKey = publicKey.replace(/^DHKEY:.+?:/, '');
+        publicKey = publicKey.replace(/^DHKEY:.+?:|\s+/g, '');
       } else {
-        var m = keyString.match(/DHKEY:(.+?):([A-Fa-f0-9]+)/);
+        var m = keyString.match(/\[DHKEY:(.+?):([A-Fa-f0-9\s]+)\]/);
         if(!m) {
-          alert('Ключ не найден. Захватите выделением строку вида DHKEY:1:PITUX');
+          alert('Ключ не найден. Захватите выделением строку вида [DHKEY:1:PITUX]');
           return false;
         }
         if(m[1] != '1') {
           alert('Неизвестная версия ' + m[1] + '.');
           return false;
         }
-        publicKey = m[2];
+        publicKey = m[2].replace(/\s+/g, '');
 
         var comment = $(s.anchorNode).closest('div.entry-comment-wrapper');
         if(comment.length)
