@@ -3,7 +3,7 @@
 // @namespace govnokod
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 0.0.8
+// @version 0.0.9
 // @grant none
 // ==/UserScript==
 
@@ -65,8 +65,8 @@
   
   // AES:версия:IV:сумма:сообщение
   function decrypt(text, keys) {
-    if(!/^AES:/.test(text)) return null;
-    text = text.replace(/\s+/g, '');
+    if(!/^\[?AES:/.test(text)) return null;
+    text = text.replace(/\s+/g, '').replace(/^\[(.+)\]$/, '$1');
     var m = text.match(/^AES:(.+?):(.+?):(.+)$/);
     if(!m) return null;
     
@@ -179,8 +179,7 @@
           return;
         }
         
-        var decr = decrypt(part[0] === '[' ?
-          part.substring(1,part.length-1) : part, keys);
+        var decr = decrypt(part, keys);
         
         if(decr == null) $this
           .append($('<span style="color: #8080ff">██████</span>')
