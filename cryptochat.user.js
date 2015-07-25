@@ -399,7 +399,7 @@
     decryptedColor = localStorage.getItem(ID + 'decr-color');
     
     $('a.answer, h3>a').live('click', appendPanel);
-    $('body').on('DOMNodeInserted', appendPanel);
+    $('body').live('DOMNodeInserted', appendPanel);
 
     $(document).ajaxComplete(appendPanel).ajaxComplete(decryptComments);
     
