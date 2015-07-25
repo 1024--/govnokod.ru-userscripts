@@ -3,7 +3,8 @@
 // @namespace govnokod
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 0.0.13
+// @include http://gvforum.ru/*
+// @version 0.0.14
 // @grant none
 // ==/UserScript==
 
@@ -13,7 +14,20 @@
 (function(){
   
   var ID = 'dbdf6b41-e08a-4046-809f-50f513fd0756';
-    
+  
+  var inputField, commentElement, settingsElement, inputFieldContainer;
+  if('govnokod.ru' === location.host) {
+    inputField = 'textarea#formElm_text';
+    commentElement = 'div.entry-comment';
+    settingsElement = '#userpane > .pane-content > ul';
+    inputFieldContainer = 'dd';
+  } else {
+    inputField = 'textarea.wysibb-texarea';
+    commentElement = 'div.entry-content';
+    settingsElement = 'body';
+    inputFieldContainer = 'div.txt-set';
+  }
+  
   function SumHandler(n, cb) {
     return function(){
       console.log('SumHandler: ' + (n-1));
@@ -192,7 +206,7 @@
   }
   
   function decryptComments() {
-    $('div.entry-comment').each(function(){
+    $(commentElement).each(function(){
       var $this = $(this);
       var text = $this.text();
       if(!/AES:|DHKEY:/.test(text)) return;
@@ -294,8 +308,8 @@
   }
   
   function appendPanel() {
-    var comment = $('textarea#formElm_text');
-    var info = comment.parent();
+    var comment = $(inputField);
+    var info = comment.closest(inputFieldContainer);
 
     if(!comment.length || !info.length) return;
     if(info.find('div.userscript-1024--cryptochat').length) return;
@@ -385,6 +399,8 @@
     decryptedColor = localStorage.getItem(ID + 'decr-color');
     
     $('a.answer, h3>a').live('click', appendPanel);
+    $('body').on('DOMNodeInserted', appendPanel);
+
     $(document).ajaxComplete(appendPanel).ajaxComplete(decryptComments);
     
     DHgen = int2bigInt(2, 8, 1);
@@ -402,7 +418,7 @@
 
     // (c)пёрто из https://github.com/bormand/govnokod-board/
     var configDialog = $("<li><div><p>Настройки шифрования:</p></div></li>")
-      .appendTo($('#userpane > .pane-content > ul'));
+      .appendTo($(settingsElement));
     
     configDialog.append($('<a href="#">Новый ключ AES</a>')
       .click(function(event){
@@ -420,7 +436,7 @@
         return false;
       }));
       
-    configDialog.append('<br/>');
+    configDialog.append(' <br/>');
 
     configDialog.append($('<a href="#">Управление ключами AES</a>')
       .click(function(event){
@@ -435,7 +451,7 @@
         return false;
       }));
     
-    configDialog.append('<br/>');
+    configDialog.append(' <br/>');
 
     configDialog.append($('<a href="#">Приватный ключ D-H</a>')
       .click(function(event){
@@ -447,7 +463,7 @@
         return false;
       }));
     
-    configDialog.append('<br/>');
+    configDialog.append(' <br/>');
 
     configDialog.append($('<a href="#">Опции</a>')
       .click(function(event){
