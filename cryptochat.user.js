@@ -4,7 +4,7 @@
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
 // @include http://gvforum.ru/*
-// @version 0.0.18
+// @version 0.0.19
 // @grant none
 // ==/UserScript==
 
@@ -362,14 +362,23 @@
             $this.append($('<sup style="color: ' + options['key-color'] +
               '">нет ключа</sup>'));
         } else {
-          $('<span class="decrypted" data-key="' + decr.key.id +
-            '" style="color: ' + options['decr-color'] + '"></span>')
-            .attr('title', 'расшифровано с помощью "' + decr.key + '"')
-            .text(decr.text)
-            .appendTo($this);
-          if(options['show-key-name'] != '0')
-            $this.append($('<sup style="color: ' + options['key-color'] +
-              '">' + decr.key +'</sup>'));
+          var decrHTML = '<span class="decrypted" data-key="' + decr.key.id +
+            '" style="color: ' + options['decr-color'] + '"></span>';
+          var decrTitle = 'расшифровано с помощью "' + decr.key + '"';
+          var keyInfoHTML = '<sup style="color: ' + options['key-color'] +
+              '">' + decr.key +'</sup>';
+        
+          coolSplit(decr.text, /\r?\n/).forEach(function(part) {
+            if(part === '\n') {
+              $this.append('<br/>');
+              return;
+            }
+            
+            $(decrHTML).attr('title', decrTitle).text(part).appendTo($this);
+            
+            if(options['show-key-name'] != '0')
+              $this.append($(keyInfoHTML));
+          });
         }
       });
     });
