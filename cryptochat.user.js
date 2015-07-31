@@ -4,7 +4,7 @@
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
 // @include http://gvforum.ru/*
-// @version 0.0.17
+// @version 0.0.18
 // @grant none
 // ==/UserScript==
 
@@ -79,17 +79,21 @@
   
   var ID = 'dbdf6b41-e08a-4046-809f-50f513fd0756';
   
-  var inputField, commentElement, settingsElement, inputFieldContainer;
+  var inputField, commentElement, settingsElement, inputFieldContainer,
+    sendButton;
+  
   if('govnokod.ru' === location.host) {
     inputField = 'textarea#formElm_text';
     commentElement = 'div.entry-comment';
     settingsElement = '#userpane > .pane-content > ul';
     inputFieldContainer = 'dd';
+    sendButton = '#formElm_commentSubmit';
   } else {
     inputField = 'textarea.wysibb-texarea';
     commentElement = 'div.entry-content';
     settingsElement = 'body';
     inputFieldContainer = 'div.txt-set';
+    sendButton = '';
   }
   
   function SumHandler(cb) {
@@ -454,6 +458,9 @@
     }
     var container = $('<div class="userscript-1024--cryptochat"></div>');
     
+    comment.removeAttr('disabled');
+    $(sendButton).removeAttr('disabled');
+    
     function transformField(func) {
       var start = comment.attr('selectionStart'),
         end = comment.attr('selectionEnd'),
@@ -465,7 +472,7 @@
     
     var encSendButton = $('<a href="#">[шифр.+отпр.]</a>').click(function(event){
       encButton.trigger('click');
-      $('#formElm_commentSubmit').trigger('click');
+      $(sendButton).trigger('click');
       event.preventDefault();
     });
     
