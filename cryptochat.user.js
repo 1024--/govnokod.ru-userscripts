@@ -4,7 +4,7 @@
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
 // @include http://gvforum.ru/*
-// @version 0.0.15
+// @version 0.0.16
 // @grant none
 // ==/UserScript==
 
@@ -41,8 +41,8 @@
   3. Отредактируйте параметры в появившемся диалоге и нажмите OK.
   !! Внимание: интерфейс браузера может при этом тормозить.
 
-  Также можно вручную ввести ключ собеседника, нажав "DH:принять"
-  на панели около окошка ввода.
+  Также можно вручную ввести ключ собеседника, нажав
+  "Ввести публичный ключ D-H" в настройках шифрования.
   ----------------------------------------------------------------
   ###################### Настройки скрипта #######################
   В меню "Настройки шифрования" есть несколько пунктов:
@@ -56,6 +56,9 @@
                            их отредактировать
   "Приватный ключ D-H" показывает приватный ключ для обмена
                        ключами и предлагает отредактировать его
+  "Ввести публичный ключ D-H" предлагает ввести публичный ключ
+                              собеседника и сгенерировать общий
+                              ключ для шифрования
   "Опции" показывает настройки: цвет расшифрованного текста,
           цвет имени ключа, показ имени ключа (1 или 0)
           около расшифрованного текста
@@ -483,29 +486,6 @@
       event.preventDefault();
     });
     
-    var DH2Button = $('<a href="#">[DH:принять]</a>').click(function(event){
-      var s = window.getSelection(), keyString = String(s),
-        keyComment = 'DH|new-key', username = '';
-      
-      if(!keyString) {
-        keyString = prompt('Введите публичный ключ того, '+
-          'с кем хотите поговорить в формате [DHKEY:1:PITUX].\n' +
-          'Вы также можете выделить текст его комментария с ключом, ' +
-          'чтобы была захвачена строка вида [DHKEY:1:PITUX] ' +
-          'и снова нажать на [DH|принять].');
-        if(keyString == null) return false;
-      } else {
-        var comment = $(s.anchorNode).closest('div.entry-comment-wrapper');
-        if(comment.length) {
-          username = comment.find('.entry-author>a').text();
-          keyComment = 'DH|' + username;
-        }
-      }
-      
-      addDHkey(keyString, keyComment, username);
-      return false;
-    });
-
     keySelector = $('<select></select>');
     updateKeySelector();
     selectKey();
@@ -516,8 +496,6 @@
       .append(decButton)
       .append('  ')
       .append(DH1Button)
-      .append('  ')
-      .append(DH2Button)
       .append('  ')
       .append(keySelector)
       .appendTo(info);
@@ -602,6 +580,19 @@
         if(key == null) return false;
         saveDHKey(key);
         reloadDHKey();
+        return false;
+      }));
+    
+    configDialog.append(' <br/>');
+
+    configDialog.append($('<a href="#">Ввести публичный ключ D-H</a>')
+      .click(function(event){
+        var keyString = prompt('Введите публичный ключ того, ' +
+          'с кем хотите поговорить в формате [DHKEY:1:PITUX].\n' +
+          'Будет сгенерирован ваш общий секретный ключ.');
+        if(keyString == null) return false;
+        
+        addDHkey(keyString, 'DH|new-key', '');
         return false;
       }));
     
