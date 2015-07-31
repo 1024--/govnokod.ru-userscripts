@@ -4,7 +4,7 @@
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
 // @include http://gvforum.ru/*
-// @version 0.0.14
+// @version 0.0.15
 // @grant none
 // ==/UserScript==
 
@@ -27,6 +27,9 @@
   Введите текст в поле ввода, выберите ключ в выпадающем списке,
   нажмите "зашифровать". Если требуется зашифровать фрагмент,
   выделите его в поле ввода и нажмите "зашифровать".
+  По умолчанию в выпадающем списке выбирается ключ, соответствующий
+  данному пользователю, или ключ, которым было зашифровано
+  сообщение, на которое вы собираетесь ответить.
   Если требуется прочитать свой текст, нажмите "расшифровать"
   (или перед этим выделите зашифрованный фрагмент).
   В одном сообщении может быть несколько зашифрованных участков.
@@ -47,7 +50,8 @@
   и "Опции".
 
   "Новый ключ AES" генерирует новый ключ и предлагает
-                   отредактировать его и комментарий к нему
+                   отредактировать его, комментарий к нему и
+                   соответствующего пользователя
   "Управление ключами AES" отображает все ключи, предлагает
                            их отредактировать
   "Приватный ключ D-H" показывает приватный ключ для обмена
@@ -84,11 +88,20 @@
     inputFieldContainer = 'div.txt-set';
   }
   
-  function SumHandler(n, cb) {
-    return function(){
-      console.log('SumHandler: ' + (n-1));
+  function SumHandler(cb) {
+    var n = 1;
+    var handler = function(){
+      console.log('SumHandler.event: ' + (n-1));
       if(!--n) cb();
     };
+    handler.copy = function(){
+      console.log('SumHandler.copy: ' + (n-1));
+      ++n;
+      return handler;
+    };
+    handler.enable = handler;
+    
+    return handler;
   }
   
   function loadScript(url, sumHandler) {
@@ -118,14 +131,16 @@
   
   checksum.LENGTH = 4;
   
-  function Key(str) {
-    var m = str.match(/^(?:\(([^)]*)\))?(.+)$/);
+  function Key(str, id) {
+    var m = str.match(/^(?:\(([^)]*)\))?(?:\[([^\]]*)\])?(.+)$/);
     if(!m) {
       alert('Неправильная строка с ключом: "' + str + '"');
-      m = ['','неверный ключ', ''];
+      m = ['','неверный ключ', '', ''];
     }
-    this.key = CryptoJS.enc.Hex.parse(m[2]);
+    this.key = CryptoJS.enc.Hex.parse(m[3]);
+    this.username = m[2];
     this.name = m[1];
+    this.id = id == null ? -1 : id|0;
   }
   
   Key.prototype.toString = function(){
@@ -134,7 +149,7 @@
   };
   
   // AES:версия:IV:сумма:сообщение
-  function decrypt(text, keys) {
+  function decrypt(text, keys, firstKey) {
     if(!/^\[?AES:/.test(text)) return null;
     text = text.replace(/\s+/g, '').replace(/^\[(.+)\]$/, '$1');
     var m = text.match(/^AES:(.+?):(.+?):(.+)$/);
@@ -148,17 +163,30 @@
 
     // console.log('INFO [' + ver + ' ' + iv + ' ' + ' ' + msg + ']');
     
-    for(var i=0; i<keys.length; ++i) {
+    function tryDecrypt(key) {
       var decrypted;
       try {
-        decrypted = CryptoJS.AES.decrypt(msg, keys[i].key, { iv: iv }).toString(CryptoJS.enc.Utf8);
+        decrypted = CryptoJS.AES
+          .decrypt(msg, key.key, { iv: iv })
+          .toString(CryptoJS.enc.Utf8);
       } catch(e) {
-        continue;
+        return;
       }
       var cs = decrypted.substring(0, checksum.LENGTH);
       decrypted = decrypted.substring(checksum.LENGTH);
       // console.log('DECR [' + decrypted + ']');
-      if(checksum(decrypted) === cs) return {text: decrypted, key: keys[i]};
+      if(checksum(decrypted) === cs)
+        return {text: decrypted, key: key};
+    }
+    
+    if(firstKey) {
+      var res = tryDecrypt(firstKey);
+      if(res) return res;
+    }
+    
+    for(var i=0; i<keys.length; ++i) {
+      var res = tryDecrypt(keys[i]);
+      if(res) return res;
     }
     
     return null;
@@ -187,16 +215,27 @@
     return key;
   }
   
-  var keys, currentKey, DHkey, DHprime, Dhgen;
+  var keys, DHkey, DHprime, Dhgen;
+  var keysByUser;
   var options = {};
   
+  function currentKey() {
+    if(!keySelector) return null;
+    return keys[keySelector.val()];
+  }
+  
   function reloadKeys() {
-    keys = loadKeys().split(':').map(function(key){
-      return new Key(key);
-    });
+    keysByUser = Object.create(null);
 
-    currentKey = keys[0];
-        
+    keys = loadKeys().split(':').map(function(keyStr, i){
+      var key = new Key(keyStr, i);
+      
+      if(key.username)
+        keysByUser[key.username] = key;
+      
+      return key;
+    });
+    
     updateKeySelector();
   }
   
@@ -220,7 +259,7 @@
     localStorage.setItem(ID + 'DHkey', key);
   }
   
-  function addDHkey(keyString, keyComment) {
+  function addDHkey(keyString, keyComment, username) {
     var m = keyString.match(/\[DHKEY:(.+?):([A-Fa-f0-9\s]+)\]/);
     if(!m) {
       alert('Ключ не найден. Захватите выделением строку вида [DHKEY:1:PITUX]');
@@ -236,11 +275,14 @@
 
     var secret = powMod(str2bigInt(publicKey, 16, 2048, 256), DHkey, DHprime);
     var salt = CryptoJS.lib.WordArray.create();
-    var key = CryptoJS.PBKDF2(bigInt2str(secret, 16), salt, { keySize: 256/32 }).toString();
+    var key = CryptoJS
+      .PBKDF2(bigInt2str(secret, 16), salt, { keySize: 256/32 })
+      .toString();
         
     key = prompt('Такой ключ будет добавлен в список ключей для шифрования.\n' +
       'Вы можете отредактировать ключ или его описание.\n' +
-      'Или нажать Esc для отмены добавления.', '(' + keyComment + ')' + key);
+      'Или нажать Esc для отмены добавления.',
+      '(' + keyComment + ')' + (username ? '[' + username + ']' : '') + key);
     if(key == null) return false;
     
     saveKeys(loadKeys() + ':' + key);
@@ -265,13 +307,17 @@
     $(commentElement).each(function(){
       var $this = $(this);
       var text = $this.text();
+      var username = $this
+        .closest('div.entry-comment-wrapper')
+        .find('.entry-author>a').text();
       if(!/AES:|DHKEY:/.test(text)) return;
       
       if($this.find('span.hidden-text'))
         text = text.replace(/^показать все, что скрыто/, '');
       
       $this.empty();
-      coolSplit(text, /\[AES:.+?\]|\[DHKEY:.+?\]|\n|^AES:.+$/).forEach(function(part, i) {
+      var parts = coolSplit(text, /\[AES:.+?\]|\[DHKEY:.+?\]|\n|^AES:.+$/)
+      parts.forEach(function(part, i) {
         if(part === '\n') {
           $this.append('<br/>');
           return;
@@ -283,10 +329,10 @@
               var comment = $this.closest('div.entry-comment-wrapper');
               var keyComment = 'DH|new-key';
               
-              if(comment.length)
-                keyComment = 'DH|' + comment.find('.entry-author>a').text();
+              if(username)
+                keyComment = 'DH|' + username;
               
-              addDHkey(part, keyComment);
+              addDHkey(part, keyComment, username);
               return false;
             })
             .appendTo($this);
@@ -298,7 +344,7 @@
           return;
         }
         
-        var decr = decrypt(part, keys);
+        var decr = decrypt(part, keys, keysByUser[username]);
         
         if(decr == null) {
           $('<span style="color: ' + options['decr-color'] + '">██████</span>')
@@ -308,7 +354,8 @@
             $this.append($('<sup style="color: ' + options['key-color'] +
               '">нет ключа</sup>'));
         } else {
-          $('<span style="color: ' + options['decr-color'] + '"></span>')
+          $('<span class="decrypted" data-key="' + decr.key.id +
+            '" style="color: ' + options['decr-color'] + '"></span>')
             .attr('title', 'расшифровано с помощью "' + decr.key + '"')
             .text(decr.text)
             .appendTo($this);
@@ -324,13 +371,40 @@
   
   function updateKeySelector() {
     if(!keySelector) return;
-    if(keys[0] !== currentKey) currentKey = keys[0];
+    var selected = Number(keySelector.val());
+    if(selected >= keys.length)
+      selected = 0;
     
     keySelector.empty();
-    keys.forEach(function(k, i) {
-      keySelector.append('<option value="' + i + '" ' + (i?'':'selected') +
-        '>' + k + '</option>');
+    keys.forEach(function(k) {
+      keySelector.append('<option value="' + k.id + '" ' +
+        (k.id === selected ? 'selected' : '') + '>' + k + '</option>');
     });
+  }
+  
+  function selectKey() {
+    var parentComment = $(inputField).closest('li.hcomment');
+    if(!parentComment.length) return;
+    
+    // Если список ключей менялся, эти ID протухают :(
+    // и скрипт будет выбирать чушь, но мне править лень, F5 излечит
+    var decr = parentComment.find('.decrypted:first');
+    if(decr.length) {
+      var id = Number(decr.attr('data-key'));
+      if(id >= 0 || id < keys.length) {
+        keySelector.val(id);
+        return;
+      }
+    }
+    
+    var uname = parentComment.find('.entry-author>a:first').text();
+    if(uname) {
+      var key = keysByUser[uname];
+      if(key) {
+        keySelector.val(key.id);
+        return;
+      }
+    }
   }
   
   function reloadOptions(){
@@ -344,11 +418,13 @@
       if(defaults.hasOwnProperty(n))
         options[n] = defaults[n];
     
-    (localStorage.getItem(ID + 'options') || '').split(/\s*,\s*/).forEach(function(prop){
-      var p = prop.split('=');
-      if(p.length != 2) return;
-      options[p[0]] = p[1];
-    });
+    (localStorage.getItem(ID + 'options') || '')
+      .split(/\s*,\s*/)
+      .forEach(function(prop){
+        var p = prop.split('=');
+        if(p.length != 2) return;
+        options[p[0]] = p[1];
+      });
   }
   
   function getOptions(){
@@ -368,19 +444,27 @@
     var info = comment.closest(inputFieldContainer);
 
     if(!comment.length || !info.length) return;
-    if(info.find('div.userscript-1024--cryptochat').length) return;
+    if(info.find('div.userscript-1024--cryptochat').length) {
+      selectKey();
+      return;
+    }
     var container = $('<div class="userscript-1024--cryptochat"></div>');
     
     function transformField(func) {
-      var start = comment.attr('selectionStart'), end = comment.attr('selectionEnd');
-      var val = comment.val();
+      var start = comment.attr('selectionStart'),
+        end = comment.attr('selectionEnd'),
+        val = comment.val();
       comment.val(start === end ? func(val) :
         val.substring(0, start) + func(val.substring(start, end)) +
         val.substring(end));
     }
     
     var encButton = $('<a href="#">[зашифровать]</a>').click(function(event){
-      transformField(function(x){ return encrypt(x, currentKey); });
+      transformField(function(x){
+        var key = currentKey();
+        if(!key) return x;
+        return encrypt(x, key);
+      });
       event.preventDefault();
     });
     
@@ -394,38 +478,37 @@
     
     var DH1Button = $('<a href="#">[DH:вставить]</a>').click(function(event){
       var publicKey = powMod(DHgen, DHkey, DHprime);
-      comment.val(comment.val() + '[DHKEY:1:' + bigInt2str(publicKey, 16) + ']');
+      comment.val(comment.val() + '[DHKEY:1:' +
+        bigInt2str(publicKey, 16) + ']');
       event.preventDefault();
     });
     
     var DH2Button = $('<a href="#">[DH:принять]</a>').click(function(event){
-      var s = window.getSelection(), keyString = String(s), keyComment = 'DH|new-key';
+      var s = window.getSelection(), keyString = String(s),
+        keyComment = 'DH|new-key', username = '';
       
       if(!keyString) {
-        keyString = prompt('Введите публичный ключ того, с кем хотите поговорить в формате [DHKEY:1:PITUX].\n' +
+        keyString = prompt('Введите публичный ключ того, '+
+          'с кем хотите поговорить в формате [DHKEY:1:PITUX].\n' +
           'Вы также можете выделить текст его комментария с ключом, ' +
-          'чтобы была захвачена строка вида [DHKEY:1:PITUX] и снова нажать на [DH|принять].');
+          'чтобы была захвачена строка вида [DHKEY:1:PITUX] ' +
+          'и снова нажать на [DH|принять].');
         if(keyString == null) return false;
       } else {
         var comment = $(s.anchorNode).closest('div.entry-comment-wrapper');
-        if(comment.length)
-          keyComment = 'DH|' + comment.find('.entry-author>a').text();
+        if(comment.length) {
+          username = comment.find('.entry-author>a').text();
+          keyComment = 'DH|' + username;
+        }
       }
       
-      addDHkey(keyString, keyComment);
+      addDHkey(keyString, keyComment, username);
       return false;
     });
 
-    keySelector = $('<select></select>').change(function(){
-      var v = Number(keySelector.val());
-      if(v < 0 || v >= keys.length) {
-        alert('Неверный номер ключа. Меню выбора не синхронизовано.');
-        return;
-      }
-      currentKey = keys[v];
-    });
-    
+    keySelector = $('<select></select>');
     updateKeySelector();
+    selectKey();
     
     container
       .append(encButton)
@@ -483,7 +566,8 @@
           'Введите свой, если требуется изменить.\n' +
           'Или нажмите Esc для отмены.\n' +
           'Можно оставить комментарий перед ключом в скобках.\n' +
-          'Новый ключ станет текущим ключом.\n', '(new)' + key);
+          'А также добавить пользователя по умолчанию в квадратных скобках.\n' +
+          'Новый ключ станет текущим ключом.\n', '(new)[guest]' + key);
         if(key == null) return false;
         var ks = loadKeys();
         ks = ks ? key + ':' + ks : key;
@@ -512,7 +596,9 @@
     configDialog.append($('<a href="#">Приватный ключ D-H</a>')
       .click(function(event){
         var key = prompt('Мой приватный ключ для обмена ключами.\n' +
-          'Отредактируйте приватный ключ или нажмите Esc для отмены.', loadDHKey());
+          'Отредактируйте приватный ключ или нажмите Esc для отмены.',
+          loadDHKey());
+        
         if(key == null) return false;
         saveDHKey(key);
         reloadDHKey();
@@ -533,9 +619,11 @@
     
   }
   
-  var handler = SumHandler(3, init);
-  loadScript('http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/aes.js', handler);
-  loadScript('http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/pbkdf2.js', handler);
-  loadScript('http://leemon.com/crypto/BigInt.js', handler);
+  var handler = SumHandler(init);
+  var cryptoJS = 'http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups';
+  loadScript(cryptoJS + '/aes.js', handler.copy());
+  loadScript(cryptoJS + '/pbkdf2.js', handler.copy());
+  loadScript('http://leemon.com/crypto/BigInt.js', handler.copy());
+  handler.enable();
 
 })();
