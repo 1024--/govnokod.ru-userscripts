@@ -4,7 +4,7 @@
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
 // @include http://gvforum.ru/*
-// @version 0.0.16
+// @version 0.0.17
 // @grant none
 // ==/UserScript==
 
@@ -27,6 +27,7 @@
   Введите текст в поле ввода, выберите ключ в выпадающем списке,
   нажмите "зашифровать". Если требуется зашифровать фрагмент,
   выделите его в поле ввода и нажмите "зашифровать".
+  Если надо зашифровать и сразу отправить, нажмите "шифр.+отпр."
   По умолчанию в выпадающем списке выбирается ключ, соответствующий
   данному пользователю, или ключ, которым было зашифровано
   сообщение, на которое вы собираетесь ответить.
@@ -462,6 +463,12 @@
         val.substring(end));
     }
     
+    var encSendButton = $('<a href="#">[шифр.+отпр.]</a>').click(function(event){
+      encButton.trigger('click');
+      $('#formElm_commentSubmit').trigger('click');
+      event.preventDefault();
+    });
+    
     var encButton = $('<a href="#">[зашифровать]</a>').click(function(event){
       transformField(function(x){
         var key = currentKey();
@@ -491,6 +498,8 @@
     selectKey();
     
     container
+      .append(encSendButton)
+      .append('  ')
       .append(encButton)
       .append('  ')
       .append(decButton)
