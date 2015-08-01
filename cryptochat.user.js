@@ -4,7 +4,7 @@
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
 // @include http://gvforum.ru/*
-// @version 0.0.19
+// @version 0.0.20
 // @grant none
 // ==/UserScript==
 
@@ -405,7 +405,10 @@
     
     // Если список ключей менялся, эти ID протухают :(
     // и скрипт будет выбирать чушь, но мне править лень, F5 излечит
-    var decr = parentComment.find('.decrypted:first');
+    var decr = parentComment
+      .find(commentElement).first()
+      .find('.decrypted:first');
+    
     if(decr.length) {
       var id = Number(decr.attr('data-key'));
       if(id >= 0 || id < keys.length) {
