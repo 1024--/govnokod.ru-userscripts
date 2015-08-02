@@ -4,7 +4,7 @@
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
 // @include http://gvforum.ru/*
-// @version 0.0.20
+// @version 0.0.21
 // @grant none
 // ==/UserScript==
 
@@ -314,6 +314,9 @@
   function decryptComments() {
     $(commentElement).each(function(){
       var $this = $(this);
+      
+      if($this.find(inputField).length) return;
+      
       var text = $this.text();
       var username = $this
         .closest('div.entry-comment-wrapper')
