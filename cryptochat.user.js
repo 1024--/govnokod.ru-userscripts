@@ -86,13 +86,13 @@
     inputField = 'textarea#formElm_text';
     commentElement = 'div.entry-comment';
     settingsElement = '#userpane > .pane-content > ul';
-    inputFieldContainer = 'dd';
+    inputFieldContainer = function(e){ return e.parent(); };
     sendButton = '#formElm_commentSubmit';
   } else {
     inputField = 'textarea.wysibb-texarea';
     commentElement = 'div.entry-content';
     settingsElement = 'body';
-    inputFieldContainer = 'div.txt-set';
+    inputFieldContainer = function(e){ return e.closest('div.txt-set'); };
     sendButton = '';
   }
   
@@ -102,14 +102,15 @@
       console.log('SumHandler.event: ' + (n-1));
       if(!--n) cb();
     };
-    handler.copy = function(){
-      console.log('SumHandler.copy: ' + (n-1));
-      ++n;
-      return handler;
-    };
-    handler.enable = handler;
     
-    return handler;
+    return {
+      copy: function(){
+        console.log('SumHandler.copy: ' + (n-1));
+        ++n;
+        return handler;
+      },
+      enable: handler
+    };
   }
   
   function loadScript(url, sumHandler) {
@@ -464,7 +465,7 @@
   
   function appendPanel() {
     var comment = $(inputField);
-    var info = comment.closest(inputFieldContainer);
+    var info = inputFieldContainer(comment);
 
     if(!comment.length || !info.length) return;
     if(info.find('div.userscript-1024--cryptochat').length) {
