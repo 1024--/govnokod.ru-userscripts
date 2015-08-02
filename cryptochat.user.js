@@ -4,7 +4,7 @@
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
 // @include http://gvforum.ru/*
-// @version 0.0.21
+// @version 0.0.22
 // @grant none
 // ==/UserScript==
 
@@ -464,73 +464,79 @@
   }
   
   function appendPanel() {
-    var comment = $(inputField);
-    var info = inputFieldContainer(comment);
+    $(inputField).each(function(){
+      var comment = $(this);
+      var info = inputFieldContainer(comment);
 
-    if(!comment.length || !info.length) return;
-    if(info.find('div.userscript-1024--cryptochat').length) {
+      if(!comment.length || !info.length) return;
+      if(info.find('div.userscript-1024--cryptochat').length) {
+        selectKey();
+        return;
+      }
+      var container = $('<div class="userscript-1024--cryptochat"></div>');
+      
+      comment.removeAttr('disabled');
+      $(sendButton).removeAttr('disabled');
+      
+      function transformField(func) {
+        var start = comment.attr('selectionStart'),
+          end = comment.attr('selectionEnd'),
+          val = comment.val();
+        comment.val(start === end ? func(val) :
+          val.substring(0, start) + func(val.substring(start, end)) +
+          val.substring(end));
+      }
+      
+      var encSendButton = $('<a href="#">[шифр.+отпр.]</a>')
+      .click(function(event){
+          encButton.trigger('click');
+          $(sendButton).trigger('click');
+          event.preventDefault();
+        });
+      
+      var encButton = $('<a href="#">[зашифровать]</a>')
+        .click(function(event){
+          transformField(function(x){
+            var key = currentKey();
+            if(!key) return x;
+            return encrypt(x, key);
+          });
+          event.preventDefault();
+        });
+      
+      var decButton = $('<a href="#">[расшифровать]</a>')
+        .click(function(event){
+          transformField(function(x){
+            var decr = decrypt(x, keys);
+            return decr != null ? decr.text : x;
+          });
+          event.preventDefault();
+        });
+      
+      var DHButton = $('<a href="#">[DH:вставить]</a>')
+        .click(function(event){
+          var publicKey = powMod(DHgen, DHkey, DHprime);
+          comment.val(comment.val() + '[DHKEY:1:' +
+            bigInt2str(publicKey, 16) + ']');
+          event.preventDefault();
+        });
+      
+      keySelector = $('<select></select>');
+      updateKeySelector();
       selectKey();
-      return;
-    }
-    var container = $('<div class="userscript-1024--cryptochat"></div>');
-    
-    comment.removeAttr('disabled');
-    $(sendButton).removeAttr('disabled');
-    
-    function transformField(func) {
-      var start = comment.attr('selectionStart'),
-        end = comment.attr('selectionEnd'),
-        val = comment.val();
-      comment.val(start === end ? func(val) :
-        val.substring(0, start) + func(val.substring(start, end)) +
-        val.substring(end));
-    }
-    
-    var encSendButton = $('<a href="#">[шифр.+отпр.]</a>').click(function(event){
-      encButton.trigger('click');
-      $(sendButton).trigger('click');
-      event.preventDefault();
+      
+      container
+        .append(encSendButton)
+        .append('  ')
+        .append(encButton)
+        .append('  ')
+        .append(decButton)
+        .append('  ')
+        .append(DHButton)
+        .append('  ')
+        .append(keySelector)
+        .appendTo(info);
     });
-    
-    var encButton = $('<a href="#">[зашифровать]</a>').click(function(event){
-      transformField(function(x){
-        var key = currentKey();
-        if(!key) return x;
-        return encrypt(x, key);
-      });
-      event.preventDefault();
-    });
-    
-    var decButton = $('<a href="#">[расшифровать]</a>').click(function(event){
-      transformField(function(x){
-        var decr = decrypt(x, keys);
-        return decr != null ? decr.text : x;
-      });
-      event.preventDefault();
-    });
-    
-    var DH1Button = $('<a href="#">[DH:вставить]</a>').click(function(event){
-      var publicKey = powMod(DHgen, DHkey, DHprime);
-      comment.val(comment.val() + '[DHKEY:1:' +
-        bigInt2str(publicKey, 16) + ']');
-      event.preventDefault();
-    });
-    
-    keySelector = $('<select></select>');
-    updateKeySelector();
-    selectKey();
-    
-    container
-      .append(encSendButton)
-      .append('  ')
-      .append(encButton)
-      .append('  ')
-      .append(decButton)
-      .append('  ')
-      .append(DH1Button)
-      .append('  ')
-      .append(keySelector)
-      .appendTo(info);
   }
   
   function init() {
