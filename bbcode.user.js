@@ -3,7 +3,7 @@
 // @namespace userscripts_1024__
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.2.2
+// @version 1.3.0
 // @grant none
 // ==/UserScript==
 
@@ -33,12 +33,91 @@ var buttons = [
               '[/i][/b][/color][/s][/color][/u][/color][/size]'],
   ['[quote]', function(sel){
       var s = window.getSelection();
-      var quote = String(s).replace(/\r\n|\r|\n|^/g, '$&>> ') + '\n';
+      if(s.rangeCount < 1 || s.isCollapsed) return '';
+      var range = s.getRangeAt(0);
+      var nodes = range.cloneContents();
       
-      if(!s.anchorNode) return ['', 0];
+      function decodeNode(node, innerText) {
+        switch(node.tagName) {
+          case 'A': return '[color=blue][u]' + innerText + '[/u][/color]';
+          
+          case 'STRONG':
+          case 'B':
+            return '[b]' + innerText + '[/b]';
+          
+          case 'I': return '[i]' + innerText + '[/i]';
+          
+          case 'BR': return '\n';
+          
+          case 'H2': return '[size=20][b]' + innerText + '[/b][/size]';
+          
+          case 'PRE': return innerText + '\n';
+          
+          case 'CODE':
+            if(node.className)
+              return '[code=' + node.className.replace(/^\s+/,'') + ']\n' +
+                innerText + '[/code]';
+          
+          case 'SPAN':
+            switch(node.style.textDecoration) {
+              case 'underline': return '[u]' + innerText + '[/u]';
+              case 'line-through': return '[s]' + innerText + '[/s]';
+              case 'blink': return '[blink]' + innerText + '[/blink]';
+            }
+            
+            switch(node.style.color) {
+              case 'white':
+              case 'blue':
+              case 'green':
+              case 'red':
+                return '[color=' + node.style.color + ']' +
+                  innerText + '[/color]';
+            }
+            
+            switch(node.style.fontSize) {
+              case '10px': return '[size=10]' + innerText + '[/size]';
+              case '15px': return '[size=15]' + innerText + '[/size]';
+              case '20px': return '[size=20]' + innerText + '[/size]';
+            }
+            
+            return innerText;
+          
+          case 'P':
+          case 'DIV':
+            return innerText + '\n';
+          
+          default: return innerText;
+        }
+      }
+      
+      function nodeToString(node, isPre) {
+        return [].map.call(node.childNodes, function(node){
+          if(node.nodeType === Node.TEXT_NODE)
+            return isPre ? node.textContent :
+              node.textContent.replace(/\s+/, ' ');
+          
+          return decodeNode(node,
+            nodeToString(node, isPre && node.tagName === 'PRE'));
+          
+        }).join('');
+      }
+      
+      function selectionToString(fragment, ancestor) {
+        if(ancestor.nodeType === Node.TEXT_NODE)
+          ancestor = ancestor.parentNode;
+        return decodeNode(ancestor,
+          nodeToString(fragment, ancestor.tagName === 'PRE'));
+      }
+      
+      var quote = selectionToString(nodes, range.commonAncestorContainer)
+        .replace(/(\r\n|\r|\n|^)(?!\s*\[code)/g, '$&>> ') + '\n';
+      
+      if($(nodes.childNodes).find('div.entry-comment-wrapper').length)
+        return quote; // выделено больше одного комментария
+      
       if($(s.anchorNode).closest('li.hcomment')
         .children('ul').children('li').children('form').length)
-        return quote;
+        return quote; // это комментарий, на который отвечаем
       
       var comment = $(s.anchorNode).closest('div.entry-comment-wrapper');
       if(!comment.length) return quote;
