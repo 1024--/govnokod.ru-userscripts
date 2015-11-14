@@ -52,8 +52,9 @@ function bump() {
 }
 
 $('a.answer, h3>a').each(function(){
-  $(this).append($('<a href="#">Бамп</a>')
+  $(this).after($('<a href="#">Бамп</a>')
     .css('margin-left', '1ex')
+    .addClass('answer')
     .click(function(){
       $('#formElm_text').val(bump());
     }));
