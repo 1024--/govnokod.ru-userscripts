@@ -4,7 +4,7 @@
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
 // @include http://gvforum.ru/*
-// @version 0.0.22
+// @version 0.0.23
 // @grant none
 // ==/UserScript==
 
@@ -650,9 +650,10 @@
   
   var handler = SumHandler(init);
   var cryptoJS = 'http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups';
+  var repo = 'https://cdn.rawgit.com/1024--/govnokod.ru-userscripts/master';
   loadScript(cryptoJS + '/aes.js', handler.copy());
   loadScript(cryptoJS + '/pbkdf2.js', handler.copy());
-  loadScript('http://leemon.com/crypto/BigInt.js', handler.copy());
+  loadScript(repo + '/dependencies/BigInt/BigInt.js', handler.copy());
   handler.enable();
 
 })();
