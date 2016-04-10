@@ -4,7 +4,7 @@
 // @description sends something strange
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.4.1
+// @version 1.4.2
 // @grant none
 // ==/UserScript==
 
@@ -50,7 +50,12 @@ function e(id){ return document.getElementById(id); }
 
 (function(){
   
-  var comments = es('.comment-text').map(function(x){ return x.textContent; });
+  var VOREC_TAG = '[size=10][color=white]#вореции[/color][/size]';
+  var VOREC_RE = /#вореции$/g;
+  
+  var comments = es('.comment-text').map(function(x){
+    return x.textContent.replace(VOREC_RE, '');
+  });
   var text = comments.join(' ');
   var answerButtons = es('a.answer, h3>a');
   
@@ -66,7 +71,8 @@ function e(id){ return document.getElementById(id); }
     ans.style.marginLeft = '1ex';
     ans.addEventListener('click', function(event){
       button.onclick();
-      e('formElm_text').value = bred(text, comments[rand(comments.length)], 300, 7, 2);
+      e('formElm_text').value = bred(text,
+        comments[rand(comments.length)], 300, 7, 2) + VOREC_TAG;
       event.preventDefault();
     });
     button.parentNode.appendChild(ans);

@@ -4,7 +4,7 @@
 // @description voretionizes texts
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 0.2.1.3
+// @version 0.2.1.4
 // @grant none
 // ==/UserScript==
 
@@ -485,7 +485,12 @@ function e(id){ return document.getElementById(id); }
 
 (function(){
 
-  var comments = es('.comment-text').map(function(x){ return x.textContent; });
+  var VOREC_TAG = '[size=10][color=white]#вореции[/color][/size]';
+  var VOREC_RE = /#вореции$/g;
+  
+  var comments = es('.comment-text').map(function(x){
+    return x.textContent.replace(VOREC_RE, '');
+  });
   var text = comments.join(' ');
   var answerButtons = es('a.answer, h3>a');
   
@@ -502,7 +507,7 @@ function e(id){ return document.getElementById(id); }
     vorecButton.addEventListener('click', function(event) {
       button.onclick();
       try {
-        e('formElm_text').value = voretionize(text);
+        e('formElm_text').value = voretionize(text) + VOREC_TAG;
       } catch(e) {
         console.error(e);
       }
