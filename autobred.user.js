@@ -4,7 +4,7 @@
 // @description sends something strange
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.4.0
+// @version 1.4.1
 // @grant none
 // ==/UserScript==
 
@@ -57,6 +57,8 @@ function e(id){ return document.getElementById(id); }
   if(text.length < 200 || !answerButtons.length) return;
   
   answerButtons.forEach(function(button){
+    if(button.parentNode.querySelector('.bred-answer')) return;
+    
     var ans = document.createElement('a');
     ans.href = '#I-should-enable-javascript';
     ans.innerHTML = 'Ответить бредом';
