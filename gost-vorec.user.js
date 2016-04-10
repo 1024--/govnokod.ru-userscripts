@@ -4,7 +4,7 @@
 // @description voretionizes texts
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 0.2.1
+// @version 0.2.1.1
 // @grant none
 // ==/UserScript==
 
@@ -485,10 +485,14 @@ function e(id){ return document.getElementById(id); }
 
 (function(){
   
-  es('form img.avatar').forEach(function(el) {
+  es('a.answer, h3>a').forEach(function(el) {
+    if(el.parentNode.querySelector('.bred-answer-gost')) return;
+    
     var vorecButton = document.createElement('a');
     vorecButton.href = '#';
     vorecButton.textContent = 'Вореционизировать';
+    vorecButton.className = 'answer bred-answer-gost';
+    vorecButton.style.marginLeft = '1ex';
     vorecButton.addEventListener('click', function(event) {
       e('formElm_text').value = voretionize(e('formElm_text').value);
       if(event.preventDefault) event.preventDefault();
