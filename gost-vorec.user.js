@@ -4,7 +4,7 @@
 // @description voretionizes texts
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 0.2.1.2
+// @version 0.2.1.3
 // @grant none
 // ==/UserScript==
 
@@ -201,7 +201,7 @@ var BASE = 5;
 var SYLLABLE = 1;
 // Длина генерируемого текста. Из-за вставки цепочек чисел,
 // результирующая длина будет слегка больше указанной.
-var TEXT_LEN = 1900;
+var TEXT_LEN = 900;
 
 // Шанс генерации нового абзаца после окончания предложения
 var NEW_PARAGRAPH_CHANCE = 0.05;
@@ -484,26 +484,32 @@ function es(s){ return Array.prototype.slice.apply(document.querySelectorAll(s))
 function e(id){ return document.getElementById(id); }
 
 (function(){
+
+  var comments = es('.comment-text').map(function(x){ return x.textContent; });
+  var text = comments.join(' ');
+  var answerButtons = es('a.answer, h3>a');
   
-  es('a.answer, h3>a').forEach(function(el) {
-    if(el.parentNode.querySelector('.bred-answer-gost')) return;
+  if(text.length < 200 || !answerButtons.length) return;
+  
+  answerButtons.forEach(function(button) {
+    if(button.parentNode.querySelector('.bred-answer-gost')) return;
     
     var vorecButton = document.createElement('a');
     vorecButton.href = '#';
-    vorecButton.textContent = 'Вореционизировать';
+    vorecButton.textContent = 'Вореционировать';
     vorecButton.className = 'answer bred-answer-gost';
     vorecButton.style.marginLeft = '1ex';
     vorecButton.addEventListener('click', function(event) {
+      button.onclick();
       try {
-        e('formElm_text').value = voretionize(e('formElm_text').value);
+        e('formElm_text').value = voretionize(text);
       } catch(e) {
         console.error(e);
       }
       if(event.preventDefault) event.preventDefault();
       return false;
     });
-    el.parentNode.appendChild(document.createTextNode(' '));
-    el.parentNode.appendChild(vorecButton);
+    button.parentNode.appendChild(vorecButton);
   });
   
 })();
