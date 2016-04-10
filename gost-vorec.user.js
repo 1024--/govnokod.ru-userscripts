@@ -4,7 +4,7 @@
 // @description voretionizes texts
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 0.2.1.1
+// @version 0.2.1.2
 // @grant none
 // ==/UserScript==
 
@@ -494,7 +494,11 @@ function e(id){ return document.getElementById(id); }
     vorecButton.className = 'answer bred-answer-gost';
     vorecButton.style.marginLeft = '1ex';
     vorecButton.addEventListener('click', function(event) {
-      e('formElm_text').value = voretionize(e('formElm_text').value);
+      try {
+        e('formElm_text').value = voretionize(e('formElm_text').value);
+      } catch(e) {
+        console.error(e);
+      }
       if(event.preventDefault) event.preventDefault();
       return false;
     });
