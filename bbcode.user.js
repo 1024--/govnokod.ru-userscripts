@@ -3,7 +3,7 @@
 // @namespace userscripts_1024__
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.3.0
+// @version 1.3.1
 // @grant none
 // ==/UserScript==
 
@@ -143,7 +143,7 @@ function appendButtons() {
   buttons.forEach(function(b){
     var name = b[0], code = b[1];
     var action = typeof code === 'function' ? code : function(sel){
-      return code.replace('xxx', sel);
+      return code.replace('xxx', function(){ return sel; });
     };
     
     var button = document.createElement('a');
