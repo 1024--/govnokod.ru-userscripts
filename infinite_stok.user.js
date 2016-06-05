@@ -4,7 +4,7 @@
 // @description Подключает бесконечный сток Борманда к стоку ГК
 // @include http://govnokod.ru/comments
 // @include http://www.govnokod.ru/comments
-// @version 2.0.0
+// @version 2.0.1
 // @grant none
 // ==/UserScript==
 
@@ -12,8 +12,8 @@
 
   function text(t){ return document.createTextNode(t); };
 
-  function id(el, sel){
-    var url = $(el).find(sel).attr('href');
+  function id(el){
+    var url = el.attr('href');
     if(!url) return;
     var m = url.match(/\d+$/);
     return m && m[0];
@@ -24,7 +24,7 @@
     var stokPosts = {}, Nstok = 0;
     
     stokPostsElements.each(function(){
-      var ID = id(this, 'a.entry-title:first');
+      var ID = id($(this).find('a.entry-title:first'));
       if(ID) stokPosts[ID] = true;
     });
     
@@ -146,6 +146,8 @@
     stokElement().append(fragment);
   }
   
+  var oldestCommentID = id($($('li.hcomment a.comment-link').get(14)));
+  
   function onLBClick(event){
     $(this).remove();
     
@@ -155,13 +157,15 @@
     stokElement().append(stub);
     
     $.ajax({
-      url: "http://146.185.130.46/ngk/api/v1/latest",
+      url: "http://146.185.130.46/ngk/api/v1/latest?id_less_than=" + oldestCommentID,
       cache: false,
       success: function(data){
         try {
           // if(typeof data === 'string')
             // data = JSON.parse(data);
           appendPosts(data);
+          oldestCommentID = data[14].comment_id;
+          appendLoadButton('');
         } catch(e){
           appendLoadButton('Ошибка: ' + e.message);
         }
@@ -180,7 +184,7 @@
     var button = infoBlock('Бесконечный сток', '#cfc');
     if(error) button.append($('<span/>', {text: error}));
     button.append('<a class="bormand-stok" href="#">' +
-      'Хочу ещё! Загрузить бесконечный сток!</a>');
+      'Хочу ещё!</a>');
     button.click(onLBClick);
     stokElement().append(button);
   }
