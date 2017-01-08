@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         gQuery
-// @version      1.0.0.0
+// @version      1.0.0.1
 // @description  initializes gQuery plugin
 // @match        http://govnokod.ru/*
 // @match        http://www.govnokod.ru/*
@@ -14,7 +14,7 @@
 (function($) {
 'use strict';
 
-var VERSION = '1.0.0.0';
+var VERSION = '1.0.0.1';
 var PLUGIN_NAME = 'gk'; // $.fn._gk_, $._gk_
 var SELECTOR_PREFIX = 'gk'; // $(...).filter(':_gk_')
 var GETTER_PREFIX = '@'; // $.fn.gk.('_@_name')
@@ -388,7 +388,7 @@ function(el, index, meta) {
 
 addParametrizedSelector('worse', 'if rating of the item is less than the value passed',
 function(el, index, meta) {
-  return gk[GETTER_PREFIX + 'rating']($(el)) > meta[3];
+  return gk[GETTER_PREFIX + 'rating']($(el)) < meta[3];
 });
 
 addSelector('commented', 'if the item has children', function(el) {
