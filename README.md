@@ -4,6 +4,9 @@
 
 Пользователю потребуется относительно свежий браузер Firefox или Chrome с установленным расширением для исполнения скриптов. Для Firefox - [Greasemonkey](https://addons.mozilla.org/ru/firefox/addon/greasemonkey/), для Chrome - [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo).
 
+####[gQuery](gquery.user.js)
+  Скрипт инициализирует плагин к jQuery, добавляющий конструкцию $(...).gk(...) для более удобной работы со страницами ГК.
+
 ####[Улучшенная навигация по комментариям](gc_new_comments.user.js)
   Скрипт реализует перемещение по новым/соседним/всем комментариям по хоткеям;
   перемещение в порядке по дате/положению комментария на странице;
