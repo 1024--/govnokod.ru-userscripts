@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         gQuery
-// @version      1.0.0.2
+// @version      1.0.0.3
 // @description  initializes gQuery plugin
 // @match        http://govnokod.ru/*
 // @match        http://www.govnokod.ru/*
@@ -14,7 +14,7 @@
 (function($) {
 'use strict';
 
-var VERSION = '1.0.0.2';
+var VERSION = '1.0.0.3';
 var PLUGIN_NAME = 'gk'; // $.fn._gk_, $._gk_
 var SELECTOR_PREFIX = 'gk'; // $(...).filter(':_gk_')
 var GETTER_PREFIX = '@'; // $.fn.gk.('_@_name')
@@ -303,6 +303,7 @@ addGetter('answerlink', 'select "answer" link', function($el) {
 addOption('hide', 'hide the comments', function($el) {
   $el.each(function() {
     var $comment = $(this), text='показать всё, что скрыто';
+    // from http://userscripts.org/scripts/source/393166.user.js (version 3.2.0) by Vindicar
     var $ec = $comment.find('.entry-comment:eq(0)');
     var $lnk;
     if (!$ec.hasClass('entry-comment-hidden')) {
@@ -323,6 +324,7 @@ addOption('hide', 'hide the comments', function($el) {
 addOption('show', 'show the comments hidden', function($el) {
   $el.each(function() {
     var $comment = $(this);
+    // from http://userscripts.org/scripts/source/393166.user.js (version 3.2.0) by Vindicar
     var $ec = $comment.find('.entry-comment:eq(0)');
     if ($ec.hasClass('entry-comment-hidden'))
       $ec
