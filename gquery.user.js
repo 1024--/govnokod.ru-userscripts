@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         gQuery
-// @version      1.0.0.1
+// @version      1.0.0.2
 // @description  initializes gQuery plugin
 // @match        http://govnokod.ru/*
 // @match        http://www.govnokod.ru/*
@@ -14,7 +14,7 @@
 (function($) {
 'use strict';
 
-var VERSION = '1.0.0.1';
+var VERSION = '1.0.0.2';
 var PLUGIN_NAME = 'gk'; // $.fn._gk_, $._gk_
 var SELECTOR_PREFIX = 'gk'; // $(...).filter(':_gk_')
 var GETTER_PREFIX = '@'; // $.fn.gk.('_@_name')
@@ -98,7 +98,7 @@ addOption('comments', 'select all the comments in the elements/body', function($
 });
 
 addOption('children', 'select children of the elements/body', function($el) {
-  return $el.find('ul:first').children('li.hcomment');
+  return $el.children('ul').children('li.hcomment');
 });
 
 addOption('parent', 'select parent comments/posts of th comments (one per element)', function($el) {
