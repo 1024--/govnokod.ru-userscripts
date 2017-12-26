@@ -4,11 +4,11 @@
 // @description Добавляет в сток ГК информацию о постах с главной.
 // @include http://govnokod.ru/comments
 // @include http://www.govnokod.ru/comments
-// @version 1.0.1
+// @version 1.0.2
 // @grant none
 // ==/UserScript==
 
-(function(){
+(function($){
 
   function text(t){ return document.createTextNode(t); };
   
@@ -136,4 +136,4 @@
     }
   });
   
-})();
+})(jQuery);

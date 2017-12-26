@@ -3,9 +3,11 @@
 // @namespace govnokod.ru
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.0.0
+// @version 1.0.1
 // @grant none
 // ==/UserScript==
+
+var $ = window.jQuery;
 
 function bump() {
   function randomth(a) { return a[Math.random() * a.length | 0]; }

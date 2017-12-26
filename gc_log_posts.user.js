@@ -4,11 +4,11 @@
 // @description Logs changed topics.
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 2.0.1
+// @version 2.0.2
 // @grant none
 // ==/UserScript==
 
-(function(){
+(function($){
   
   var SCRIPT_ID = '5e46435b-58ec-4516-92b5-8251cc89c80e';
 
@@ -231,4 +231,4 @@
     break;
   }
   
-})();
+})(jQuery);

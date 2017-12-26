@@ -4,9 +4,11 @@
 // @description Добавляет скриптам кнопку "Выполнить"
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 0.0.2
+// @version 0.0.3
 // @grant none
 // ==/UserScript==
+
+var $ = window.jQuery;
 
 $('li.hentry:has(a[rel=chapter][text=JavaScript])').each(function(){
   var entry = $(this),

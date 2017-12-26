@@ -4,7 +4,7 @@
 // @description Enables user to move between new comments.
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 2.5.4
+// @version 2.5.5
 // @grant none
 // ==/UserScript==
 
@@ -38,7 +38,7 @@
         (см. "Настройки навигации" в меню пользователя)
 */
 
-(function(){
+(function($){
 var $html = $('html');
 var $body = $('body');
 var $page = $('body, html');
@@ -508,4 +508,4 @@ $body.keypress(function(event){
   }
 });
 
-})();
+})(jQuery);

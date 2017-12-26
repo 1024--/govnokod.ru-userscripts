@@ -4,7 +4,7 @@
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
 // @include http://gvforum.ru/*
-// @version 0.0.24
+// @version 0.0.25
 // @grant none
 // ==/UserScript==
 
@@ -75,7 +75,7 @@
 
 */
 
-(function(){
+(function($){
   
   var ID = 'dbdf6b41-e08a-4046-809f-50f513fd0756';
   
@@ -656,4 +656,4 @@
   loadScript(repo + '/dependencies/BigInt/BigInt.js', handler.copy());
   handler.enable();
 
-})();
+})(jQuery);

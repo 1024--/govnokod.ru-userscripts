@@ -3,11 +3,11 @@
 // @namespace userscripts_1024__
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.3.1
+// @version 1.3.2
 // @grant none
 // ==/UserScript==
 
-(function(){
+(function($){
 
 // Описание кнопок в формате ["что написано на кнопке", "что оно сделает с xxx"]
 // или ["что написано на кнопке", функция, возвращающая строку
@@ -186,4 +186,4 @@ appendButtons();
 $('a.answer, h3>a').live('click', appendButtons);
 $(document).ajaxComplete(appendButtons);
 
-})();
+})(jQuery);
