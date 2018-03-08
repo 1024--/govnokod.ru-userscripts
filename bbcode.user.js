@@ -3,7 +3,7 @@
 // @namespace userscripts_1024__
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.3.3
+// @version 1.3.4
 // @grant none
 // ==/UserScript==
 
@@ -129,7 +129,7 @@ var buttons = [
     function shakeChar(c) {
       if(/\s/.test(c)) return c;
       return [
-        ['[u]X[/u]','[i]X[/i]','[b]X[/b]','[s]X[/s]','[code]X[/code]','X'],
+        ['[u]X[/u]','[i]X[/i]','[b]X[/b]','[s]X[/s]','X'],
         ['[size=10]X[/size]','[size=15]X[/size]','[size=20]X[/size]','X'],
         ['[color=red]X[/color]','[color=blue]X[/color]','[color=green]X[/color]','X']
       ].reduce(function(c, choices) {
