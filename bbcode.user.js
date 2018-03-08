@@ -3,7 +3,7 @@
 // @namespace userscripts_1024__
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.3.2
+// @version 1.3.3
 // @grant none
 // ==/UserScript==
 
@@ -124,6 +124,20 @@ var buttons = [
       return '[b]' + comment.find('.entry-author>a').text() + '[/b] в ' +
         '[color=blue][u]' + comment.find('a.comment-link').attr('href') +
         '[/u][/color] написал:\n' + quote;
+  }],
+  ['[shake]', function(sel) {
+    function shakeChar(c) {
+      if(/\s/.test(c)) return c;
+      return [
+        ['[u]X[/u]','[i]X[/i]','[b]X[/b]','[s]X[/s]','[code]X[/code]','X'],
+        ['[size=10]X[/size]','[size=15]X[/size]','[size=20]X[/size]','X'],
+        ['[color=red]X[/color]','[color=blue]X[/color]','[color=green]X[/color]','X']
+      ].reduce(function(c, choices) {
+        var choice = choices[Math.random() * choices.length | 0];
+        return choice.replace(/X/g, function(t){ return c; });
+      }, c);
+    }
+    return sel.replace(/./g, shakeChar);
   }],
   // ['[capsbold]', function(sel){
     // sel = sel.toUpperCase();
