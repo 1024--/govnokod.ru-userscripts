@@ -5,7 +5,7 @@
 // @include http://govnokod.ru/comments
 // @include http://www.govnokod.ru/comments
 // @require https://code.jquery.com/jquery-1.4.min.js
-// @version 2.0.2
+// @version 3.0
 // @grant none
 // ==/UserScript==
 
@@ -30,15 +30,15 @@
     });
     
     return comments.filter(function(comm){
-      return !(comm.thread_id in stokPosts);
+      return !(comm.post_id in stokPosts);
     });
   }
 
   function postInfo(entry){
     var UID = entry.user_id;
-    var PID = entry.thread_id;
-    var PID2 = entry.reply_id;
-    var CID = entry.comment_id;
+    var PID = entry.post_id;
+    var PID2 = entry.comment_list_id;
+    var CID = entry.id;
     var postRef = '/' + PID;
     var commName = 'comment' + CID;
     var commRef = '/' + PID + '#comment' + CID;
@@ -48,10 +48,10 @@
     var userRef = '/user/' + UID;
     var userName = entry.user_name;
     var time = entry.posted;
-    var hrtime = entry.posted;
+    var hrtime = (new Date(entry.posted)).toLocaleString();
     var avatar = UID == 1 ?
       '/files/avatars/guest_28.png' :
-      'http://www.gravatar.com/avatar/' + entry.avatar_hash +
+      'http://www.gravatar.com/avatar/' + entry.user_avatar +
       '?default=http%3A%2F%2Fgovnokod.ru%2Ffiles' +
       '%2Favatars%2Fnoavatar_28.png&amp;r=pg&amp;size=28';
     var commHTML = entry.text;
@@ -74,8 +74,7 @@
                 .append($('<a/>', {href: commRef, name: commName,
                                    title: "Ссылка на комментарий",
                                    'class': "comment-link", text: '#'})))
-              .append($('<li/>', {'class': "entry-comment"})
-                .append($(commHTML)))
+              .append($('<li/>', {'class': "entry-comment", 'html': commHTML}))
               .append($('<a/>', {'class': "answer", href: answerRef,
                                  text: 'Ответить'}))))))
       .append($('<div/>', {'class': "show-code"})
@@ -136,43 +135,60 @@
     // }
 
     var comments = filterInfiniteStok(stok);
-    var fragment = document.createDocumentFragment();
-        
-    if(comments.length >= stok.length)
-      fragment.appendChild(warning('Возможно, сток порван.')[0]);
+    if(comments.length) {
+      var fragment = document.createDocumentFragment();
+          
+      if(comments.length >= stok.length)
+        fragment.appendChild(warning('Возможно, сток порван.')[0]);
+      
+      for(var i=0; i < comments.length; ++i)
+        fragment.appendChild(postInfo(comments[i])[0]);
+      
+      stokElement().append(fragment);
+    }
     
-    for(var i=0; i < comments.length; ++i)
-      fragment.appendChild(postInfo(comments[i])[0]);
-    
-    stokElement().append(fragment);
+    return comments.length;
   }
   
-  var oldestCommentID = id($($('li.hcomment a.comment-link').get(14)));
+  var oldestCommentDate = new Date($($('li.hcomment abbr.published').get(18)).attr('title'));
+  var stub = null, stubCounter = '...';
   
   function onLBClick(event){
     $(this).remove();
     
-    var stub = infoBlock('Бесконечный сток', '#cfc')
-      .append(text('Загружается...'));
+    if(!stub) {
+      stub = infoBlock('Бесконечный сток', '#cfc')
+        .append($('<span/>').text('Загружается...'));
+      stubCounter = '...';
+    }
     
     stokElement().append(stub);
     
     $.ajax({
-      url: "http://146.185.130.46/ngk/api/v1/latest?id_less_than=" + oldestCommentID,
+      url: "http://bormand.gcode.cx/ngk/api/comments?before=" +
+        oldestCommentDate.toISOString().replace(/\.\d\d\dZ/, 'Z'),
       cache: false,
       success: function(data){
         try {
           // if(typeof data === 'string')
             // data = JSON.parse(data);
-          appendPosts(data);
-          oldestCommentID = data[14].comment_id;
-          appendLoadButton('');
+          var inserted = appendPosts(data);
+          oldestCommentDate = new Date(data[18].posted);
+          if(inserted) {
+            appendLoadButton('');
+          } else {
+            stub.find('span').text('Загружается' + stubCounter);
+            stubCounter += '.';
+            onLBClick();
+            return;
+          }
         } catch(e){
           appendLoadButton('Ошибка: ' + e.message);
         }
         stub.remove();
+        stub = null;
       },
-      error: function(){
+      error: function(e){
         appendLoadButton('Ошибка загрузки бесконечного стока.');
         stub.remove();
       }
