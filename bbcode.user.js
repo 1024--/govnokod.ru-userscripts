@@ -3,7 +3,8 @@
 // @namespace userscripts_1024__
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.3.4
+// @require https://code.jquery.com/jquery-1.4.min.js
+// @version 1.4.0
 // @grant none
 // ==/UserScript==
 
@@ -200,4 +201,4 @@ appendButtons();
 $('a.answer, h3>a').live('click', appendButtons);
 $(document).ajaxComplete(appendButtons);
 
-})(jQuery);
+})(window.jQuery || window.$);

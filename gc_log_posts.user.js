@@ -4,7 +4,8 @@
 // @description Logs changed topics.
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 2.0.2
+// @require https://code.jquery.com/jquery-1.4.min.js
+// @version 2.1.0
 // @grant none
 // ==/UserScript==
 
@@ -231,4 +232,4 @@
     break;
   }
   
-})(jQuery);
+})(window.jQuery || window.$);

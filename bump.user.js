@@ -3,11 +3,12 @@
 // @namespace govnokod.ru
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 1.0.1
+// @require https://code.jquery.com/jquery-1.4.min.js
+// @version 1.1.0
 // @grant none
 // ==/UserScript==
 
-var $ = window.jQuery;
+(function($) {
 
 function bump() {
   function randomth(a) { return a[Math.random() * a.length | 0]; }
@@ -61,3 +62,5 @@ $('a.answer, h3>a').each(function(){
       $('#formElm_text').val(bump());
     }));
 });
+
+})(window.jQuery || window.$);

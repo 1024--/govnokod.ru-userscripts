@@ -4,7 +4,8 @@
 // @description Enables user to move between entries.
 // @exclude http://govnokod.ru/*
 // @include http://*
-// @version 1.0.1
+// @require      https://code.jquery.com/jquery-1.4.min.js
+// @version 1.1
 // @grant none
 // ==/UserScript==
 
@@ -21,8 +22,7 @@
   Ctrl+? - открытие настроек
 */
 
-(function(){
-var $ = window.$ || window.jQuery;
+(function($){
 if(!$) return;
 
 var $html = $('html');
@@ -265,4 +265,4 @@ $body.keypress(function(event){
   }
 });
 
-})();
+})(window.jQuery || window.$);

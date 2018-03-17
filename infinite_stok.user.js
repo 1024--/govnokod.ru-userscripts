@@ -4,6 +4,7 @@
 // @description Подключает бесконечный сток Борманда к стоку ГК
 // @include http://govnokod.ru/comments
 // @include http://www.govnokod.ru/comments
+// @require https://code.jquery.com/jquery-1.4.min.js
 // @version 2.0.2
 // @grant none
 // ==/UserScript==
@@ -191,4 +192,4 @@
   
   appendLoadButton('');
 
-})(jQuery);
+})(window.jQuery || window.$);

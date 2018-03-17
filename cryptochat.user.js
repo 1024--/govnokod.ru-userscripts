@@ -4,7 +4,11 @@
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
 // @include http://gvforum.ru/*
-// @version 0.0.25
+// @require https://code.jquery.com/jquery-1.4.min.js
+// @require https://cdn.rawgit.com/1024--/govnokod.ru-userscripts/master/dependencies/CryptoJSv3.1.2/rollups/aes.js
+// @require https://cdn.rawgit.com/1024--/govnokod.ru-userscripts/master/dependencies/CryptoJSv3.1.2/rollups/aes.js
+// @require https://cdn.rawgit.com/1024--/govnokod.ru-userscripts/master/dependencies/BigInt/BigInt.js
+// @version 0.0.26
 // @grant none
 // ==/UserScript==
 
@@ -95,37 +99,7 @@
     inputFieldContainer = function(e){ return e.closest('div.txt-set'); };
     sendButton = '';
   }
-  
-  function SumHandler(cb) {
-    var n = 1;
-    var handler = function(){
-      console.log('SumHandler.event: ' + (n-1));
-      if(!--n) cb();
-    };
     
-    return {
-      copy: function(){
-        console.log('SumHandler.copy: ' + (n-1));
-        ++n;
-        return handler;
-      },
-      enable: handler
-    };
-  }
-  
-  function loadScript(url, sumHandler) {
-    var script = document.createElement('script');
-    script.src = url;
-    document.body.appendChild(script);
-    
-    script.addEventListener('load', sumHandler);
-    script.addEventListener('error', function(){
-      setTimeout(function(){
-        loadScript(url, sumHandler);
-      }, 1000);
-    });
-  }
-  
   function checksum(text) {
     var cs = 0;
     for(var i=0; i<text.length; ++i) {
@@ -539,7 +513,7 @@
     });
   }
   
-  function init() {
+  (function init() {
     
     if(!loadKeys()) saveKeys('(automatic)' + createKey());
     if(!loadDHKey()) saveDHKey(createKey(2048));
@@ -646,14 +620,6 @@
         return false;
       }));
     
-  }
-  
-  var handler = SumHandler(init);
-  var repo = 'https://cdn.rawgit.com/1024--/govnokod.ru-userscripts/master';
-  var cryptoJS = repo + '/dependencies/CryptoJSv3.1.2/rollups';
-  loadScript(cryptoJS + '/aes.js', handler.copy());
-  loadScript(cryptoJS + '/pbkdf2.js', handler.copy());
-  loadScript(repo + '/dependencies/BigInt/BigInt.js', handler.copy());
-  handler.enable();
+  })();
 
-})(jQuery);
+})(window.$ || window.jQuery);

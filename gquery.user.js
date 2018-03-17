@@ -1,9 +1,10 @@
 // ==UserScript==
 // @name         gQuery
-// @version      1.0.0.4
+// @version      1.0.1
 // @description  initializes gQuery plugin
 // @match        http://govnokod.ru/*
 // @match        http://www.govnokod.ru/*
+// @require      https://code.jquery.com/jquery-1.4.min.js
 // @grant        none
 // ==/UserScript==
 
@@ -443,4 +444,4 @@ $.fn[PLUGIN_NAME] = runGK;
 $[PLUGIN_NAME] = runGK.bind($());
 $.extend($.expr[':'], gkSelectors);
 
-})(jQuery);
+})(window.jQuery || window.$);

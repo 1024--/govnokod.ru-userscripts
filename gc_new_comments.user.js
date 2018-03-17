@@ -4,7 +4,8 @@
 // @description Enables user to move between new comments.
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
-// @version 2.5.5
+// @require      https://code.jquery.com/jquery-1.4.min.js
+// @version 2.6.0
 // @grant none
 // ==/UserScript==
 
@@ -508,4 +509,4 @@ $body.keypress(function(event){
   }
 });
 
-})(jQuery);
+})(window.jQuery || window.$);

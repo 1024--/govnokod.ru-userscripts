@@ -4,7 +4,8 @@
 // @description	Adds links to parent commentary to GK comments, and sets parent comment as link tooltip.
 // @include	http://govnokod.ru/*
 // @include	http://www.govnokod.ru/*
-// @version	1.1.0
+// @require	https://code.jquery.com/jquery-1.4.min.js
+// @version	1.2.0
 // @grant	none
 // ==/UserScript==
 
@@ -13,8 +14,7 @@
   http://userscripts.org/scripts/show/172756
 */
 
-(function(){
-$ = window.jQuery;
+(function($){
 
 //dirty, DIRTY hack to wait for certain element to appear. -_- 
 //But I have no idea how to do it right.
@@ -144,4 +144,4 @@ function setParentLinks($context) {
 setParentLinks($('body'));
 hijackComments();
 $('body').click(highlightComment);
-})();
+})(window.jQuery || window.$);
