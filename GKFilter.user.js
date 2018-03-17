@@ -4,17 +4,18 @@
 // @description	Filter posts & comments on govnokod.ru
 // @include	http://govnokod.ru/*
 // @include	http://www.govnokod.ru/*
-// @version	3.2.1
+// @require	https://code.jquery.com/jquery-1.4.min.js
+// @require https://greasemonkey.github.io/gm4-polyfill/gm4-polyfill.js
+// @version	3.2.2
 // @grant	unsafeWindow
 // @grant	GM_registerMenuCommand
-// @grant	GM_getValue
-// @grant	GM_setValue
+// @grant	GM.getValue
+// @grant	GM.setValue
 // ==/UserScript==
 
 // This is my modified version of the script  http://userscripts.org/scripts/source/393166.user.js (version 3.2.0) made by Vindicar
 
-(function(){
-$ = unsafeWindow.jQuery;
+(async function($){
 //dirty, DIRTY hack to wait for certain element to appear. -_- 
 //But I have no idea how to do it right.
 function waitForSelector(selector, context, mustexist, callback) {
@@ -409,17 +410,17 @@ var Options = {
 			return; //-- Message is not for us.
 		else { 
 		if (messageJSON.GKFILTER === Options.magic) {
-			GM_setValue('groups',JSON.stringify(messageJSON.groups));
-			GM_setValue('globals',JSON.stringify(messageJSON.globals));
+			GM.setValue('groups',JSON.stringify(messageJSON.groups));
+			GM.setValue('globals',JSON.stringify(messageJSON.globals));
 			}
 		}
 	},
-	load: function() {
-		var arr = JSON.parse(GM_getValue('groups','[]'));
+	load: async function() {
+		var arr = JSON.parse(await GM.getValue('groups','[]'));
 		Options.groups = [];
 		for (var i=0;i<arr.length;i++)
 			Options.groups.push(Group.unserialize(arr[i]));
-		var glb = JSON.parse(GM_getValue('globals','{}'));
+		var glb = JSON.parse(await GM.getValue('globals','{}'));
 		Options.globals = {
 			spoilertext: (typeof glb.spoilertext === 'undefined') ? 'показать всё, что скрыто' : glb.spoilertext.toString(),
 			spoilerhint: (typeof glb.spoilerhint === 'undefined') ? true : Boolean(glb.spoilerhint),
@@ -588,7 +589,7 @@ GM_registerMenuCommand("GK Filter settings", function(){Options.show();}, 'f');
 //============================================================================================================
 
 Options.installOnSaveListener();
-Options.load();
+await Options.load();
 if (Options.groups.length > 0)
 	//делаем дело
 	if (/govnokod\.ru\/\d+/.test(location))
@@ -606,4 +607,4 @@ if (Options.groups.length > 0)
 		processCommentsPage(Options.groups, $('body'));
             
 		}
-})();
+})(window.jQuery || window.$);
