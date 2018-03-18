@@ -3,7 +3,7 @@
 // @description    Подсвечивает новые комментарии
 // @include        http://govnokod.ru/*
 // @include        http://www.govnokod.ru/*
-// @version        1.0
+// @version        1.0.1
 // @grant          none
 // ==/UserScript==
 
@@ -60,7 +60,7 @@ for(var i=0; i<comments.length; ++i) {
   var comment = comments[i];
   var published = comment.querySelector('abbr.published');
   if(!published) continue;
-  var p = new Date(published.title) + 10000; // +10s to catch all up
+  var p = Number(new Date(published.title)) + 10000; // +10s to catch all up
   if(!isFinite(p) || p < lastVisitTime) continue;
   comment.classList.add('new');
 }
