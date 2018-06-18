@@ -4,7 +4,7 @@
 // @include http://govnokod.ru/*
 // @include http://www.govnokod.ru/*
 // @require https://code.jquery.com/jquery-1.4.min.js
-// @version 1.4.0
+// @version 1.4.1
 // @grant none
 // ==/UserScript==
 
@@ -148,9 +148,10 @@ var buttons = [
 
 function appendButtons() {
   var comment = document.querySelector('textarea#formElm_text');
+  if(!comment) return;
+  
   var info = comment.parentNode;
 
-  if(!comment || !info) return;
   if(info.querySelector('div.userscript-1024--bb-code')) return;
   var container = document.createElement('div');
   container.className = 'userscript-1024--bb-code';
