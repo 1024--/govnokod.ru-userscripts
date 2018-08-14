@@ -1,10 +1,10 @@
 ﻿// ==UserScript==
 // @name BB-codes
 // @namespace userscripts_1024__
-// @include http://govnokod.ru/*
-// @include http://www.govnokod.ru/*
+// @include *://govnokod.ru/*
+// @include *://www.govnokod.ru/*
 // @require https://code.jquery.com/jquery-1.4.min.js
-// @version 1.4.1
+// @version 1.4.2
 // @grant none
 // ==/UserScript==
 

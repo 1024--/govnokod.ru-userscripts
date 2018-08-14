@@ -2,10 +2,10 @@
 // @name	GK parent comment (2)
 // @namespace	GK
 // @description	Adds links to parent commentary to GK comments, and sets parent comment as link tooltip.
-// @include	http://govnokod.ru/*
-// @include	http://www.govnokod.ru/*
+// @include	*://govnokod.ru/*
+// @include	*://www.govnokod.ru/*
 // @require	https://code.jquery.com/jquery-1.4.min.js
-// @version	1.2.0
+// @version	1.2.1
 // @grant	none
 // ==/UserScript==
 

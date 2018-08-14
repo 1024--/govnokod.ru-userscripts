@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         gQuery
-// @version      1.0.1
+// @version      1.0.2
 // @description  initializes gQuery plugin
-// @match        http://govnokod.ru/*
-// @match        http://www.govnokod.ru/*
+// @match        *://govnokod.ru/*
+// @match        *://www.govnokod.ru/*
 // @require      https://code.jquery.com/jquery-1.4.min.js
 // @grant        none
 // ==/UserScript==

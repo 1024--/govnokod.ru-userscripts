@@ -2,10 +2,10 @@
 // @name govnokod: post changes
 // @namespace govnokod
 // @description Logs changed topics.
-// @include http://govnokod.ru/*
-// @include http://www.govnokod.ru/*
+// @include *://govnokod.ru/*
+// @include *://www.govnokod.ru/*
 // @require https://code.jquery.com/jquery-1.4.min.js
-// @version 2.1.0
+// @version 2.1.1
 // @grant none
 // ==/UserScript==
 

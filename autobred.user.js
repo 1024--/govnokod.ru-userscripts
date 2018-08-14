@@ -2,9 +2,9 @@
 // @name govnokod: autobred
 // @namespace govnokod
 // @description sends something strange
-// @include http://govnokod.ru/*
-// @include http://www.govnokod.ru/*
-// @version 1.4.2
+// @include *://govnokod.ru/*
+// @include *://www.govnokod.ru/*
+// @version 1.4.3
 // @grant none
 // ==/UserScript==
 

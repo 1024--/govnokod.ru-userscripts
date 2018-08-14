@@ -2,11 +2,11 @@
 // @name		GK Filter
 // @namespace	GK
 // @description	Filter posts & comments on govnokod.ru
-// @include	http://govnokod.ru/*
-// @include	http://www.govnokod.ru/*
+// @include	*://govnokod.ru/*
+// @include	*://www.govnokod.ru/*
 // @require	https://code.jquery.com/jquery-1.4.min.js
 // @require https://greasemonkey.github.io/gm4-polyfill/gm4-polyfill.js
-// @version	3.2.2
+// @version	3.2.3
 // @grant	unsafeWindow
 // @grant	GM_registerMenuCommand
 // @grant	GM.getValue

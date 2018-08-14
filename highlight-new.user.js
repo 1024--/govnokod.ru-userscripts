@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name           Comment Highlighter
 // @description    Подсвечивает новые комментарии
-// @include        http://govnokod.ru/*
-// @include        http://www.govnokod.ru/*
-// @version        2.0
+// @include        *://govnokod.ru/*
+// @include        *://www.govnokod.ru/*
+// @version        2.1
 // @grant          none
 // ==/UserScript==
 

@@ -2,10 +2,10 @@
 // @name Выполнить JavaScript
 // @namespace govnokod
 // @description Добавляет скриптам кнопку "Выполнить"
-// @include http://govnokod.ru/*
-// @include http://www.govnokod.ru/*
+// @include *://govnokod.ru/*
+// @include *://www.govnokod.ru/*
 // @require https://code.jquery.com/jquery-1.4.min.js
-// @version 0.0.4
+// @version 0.0.5
 // @grant none
 // ==/UserScript==
 

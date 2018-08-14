@@ -2,9 +2,9 @@
 // @name govnokod: gost-vorec
 // @namespace govnokod
 // @description voretionizes texts
-// @include http://govnokod.ru/*
-// @include http://www.govnokod.ru/*
-// @version 0.2.1.4
+// @include *://govnokod.ru/*
+// @include *://www.govnokod.ru/*
+// @version 0.2.1.5
 // @grant none
 // ==/UserScript==
 

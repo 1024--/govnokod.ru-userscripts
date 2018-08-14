@@ -2,10 +2,10 @@
 // @name Перемещение по j-k
 // @namespace userscripts_1024__
 // @description Enables user to move between entries.
-// @exclude http://govnokod.ru/*
-// @include http://*
+// @exclude *://govnokod.ru/*
+// @include *://*
 // @require      https://code.jquery.com/jquery-1.4.min.js
-// @version 1.1
+// @version 1.2
 // @grant none
 // ==/UserScript==
 

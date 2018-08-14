@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name govnokod: bump
 // @namespace govnokod.ru
-// @include http://govnokod.ru/*
-// @include http://www.govnokod.ru/*
+// @include *://govnokod.ru/*
+// @include *://www.govnokod.ru/*
 // @require https://code.jquery.com/jquery-1.4.min.js
-// @version 1.1.0
+// @version 1.1.1
 // @grant none
 // ==/UserScript==
 

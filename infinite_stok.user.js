@@ -2,10 +2,10 @@
 // @name Бесконечный сток
 // @namespace govnokod
 // @description Подключает бесконечный сток Борманда к стоку ГК
-// @include http://govnokod.ru/comments
-// @include http://www.govnokod.ru/comments
+// @include *://govnokod.ru/comments
+// @include *://www.govnokod.ru/comments
 // @require https://code.jquery.com/jquery-1.4.min.js
-// @version 3.0
+// @version 3.1
 // @grant none
 // ==/UserScript==
 
@@ -52,7 +52,7 @@
     var avatar = UID == 1 ?
       '/files/avatars/guest_28.png' :
       'http://www.gravatar.com/avatar/' + entry.user_avatar +
-      '?default=http%3A%2F%2Fgovnokod.ru%2Ffiles' +
+      '?default=https%3A%2F%2Fgovnokod.ru%2Ffiles' +
       '%2Favatars%2Fnoavatar_28.png&amp;r=pg&amp;size=28';
     var commHTML = entry.text;
     

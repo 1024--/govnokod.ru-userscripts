@@ -2,9 +2,9 @@
 // @name Псевдографические псевдогифки
 // @namespace govnokod
 
-// @include http://govnokod.ru/*
-// @include http://www.govnokod.ru/*
-// @version 1.0.7
+// @include *://govnokod.ru/*
+// @include *://www.govnokod.ru/*
+// @version 1.0.8
 // @grant none
 // ==/UserScript==
 

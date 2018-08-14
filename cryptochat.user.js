@@ -1,14 +1,13 @@
 ﻿// ==UserScript==
 // @name Шифрованный чат
 // @namespace govnokod
-// @include http://govnokod.ru/*
-// @include http://www.govnokod.ru/*
-// @include http://gvforum.ru/*
+// @include *://govnokod.ru/*
+// @include *://www.govnokod.ru/*
 // @require https://code.jquery.com/jquery-1.4.min.js
 // @require https://cdn.rawgit.com/1024--/govnokod.ru-userscripts/master/dependencies/CryptoJSv3.1.2/rollups/aes.js
 // @require https://cdn.rawgit.com/1024--/govnokod.ru-userscripts/master/dependencies/CryptoJSv3.1.2/rollups/aes.js
 // @require https://cdn.rawgit.com/1024--/govnokod.ru-userscripts/master/dependencies/BigInt/BigInt.js
-// @version 0.0.26
+// @version 0.0.27
 // @grant none
 // ==/UserScript==
 

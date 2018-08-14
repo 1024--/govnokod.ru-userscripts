@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Ignorast
-// @version      0.2
-// @match        http://govnokod.ru/*
-// @match        http://www.govnokod.ru/*
+// @version      0.3
+// @match        *://govnokod.ru/*
+// @match        *://www.govnokod.ru/*
 // @grant        none
 // ==/UserScript==
 
