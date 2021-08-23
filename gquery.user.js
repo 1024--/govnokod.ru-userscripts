@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         gQuery
-// @version      1.0.2
+// @version      1.0.3
 // @description  initializes gQuery plugin
 // @match        *://govnokod.ru/*
 // @match        *://www.govnokod.ru/*
@@ -15,7 +15,7 @@
 (function($) {
 'use strict';
 
-var VERSION = '1.0.0.3';
+var VERSION = '1.0.3';
 var PLUGIN_NAME = 'gk'; // $.fn._gk_, $._gk_
 var SELECTOR_PREFIX = 'gk'; // $(...).filter(':_gk_')
 var GETTER_PREFIX = '@'; // $.fn.gk.('_@_name')
@@ -207,8 +207,8 @@ addGetter('date', 'select the date of the first item', function($el) {
 
 addOption('container', 'select the container elements', function($el) {
   return bind($el, function($el) {
-    if($el.has('.entry-title')) return $el;
-    return $el.find('.entry-comment-wrapper');
+    if($el.has('.entry-title').length) return $el;
+    return $el.find('.entry-comment-wrapper:first');
   });
 });
 
