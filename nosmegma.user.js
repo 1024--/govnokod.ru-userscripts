@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GK-settings
 // @namespace    http://tampermonkey.net/
-// @version      0.5.4
+// @version      0.5.5
 // @description  no smegma
 // @author       1024--, j123123
 // @match        *://govnokod.ru/*
@@ -161,6 +161,9 @@ as published by Sam Hocevar. See http://www.wtfpl.net/ for more details.
 'aderyabin',
 'adepto',
 'ADBzYkS',
+'beatmasta',
+'agfvTzv',
+'AedenJackson',
     ];
     var pituxes_ = {};
     pituxes.forEach(p => {pituxes_[p] = true; });
