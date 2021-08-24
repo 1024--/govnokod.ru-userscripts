@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GK-settings
 // @namespace    http://tampermonkey.net/
-// @version      0.5.1
+// @version      0.5.2
 // @description  no smegma
 // @author       1024--, j123123
 // @match        *://govnokod.ru/*
@@ -168,7 +168,7 @@ as published by Sam Hocevar. See http://www.wtfpl.net/ for more details.
 
     $.gk('comments').each(function () {
         const name = $(this).gk('@name');
-        if (name in whitelist) return;
+        if (name in whitelist_) return;
         if (name in pituxes_) {
             $(this).gk('container').remove();
             return;
