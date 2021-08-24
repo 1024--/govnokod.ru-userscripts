@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GK-settings
 // @namespace    http://tampermonkey.net/
-// @version      0.4.1
+// @version      0.5
 // @description  no smegma
 // @author       1024--, j123123
 // @match        *://govnokod.ru/*
@@ -9,12 +9,66 @@
 // @grant        none
 // ==/UserScript==
 
+/**
+Copyright © 2021 1024--, j123123
+This work is free. You can redistribute it and/or modify it under the
+terms of the Do What The Fuck You Want To Public License, Version 2,
+as published by Sam Hocevar. See http://www.wtfpl.net/ for more details.
+*/
+
 (function() {
     'use strict';
 
     if (location.pathname === '/comments') return;
 
     $.gk('comments:gkhidden>show');
+
+    const whitelist = [
+'1024--',
+'3.14159265',
+'3_dar',
+'3EHuTHblu_nemyx',
+'3oJIoTou_xyu',
+'ABryCTOBCKuu_nemyx',
+'admin',
+'Antervis',
+'ASD_77',
+'bormand',
+'CHayT',
+'cKpuna4',
+'COPOKA',
+'defecate-plusplus',
+'defecatinho',
+'Desktop',
+'Dummy00001',
+'DypHuu_niBEHb',
+'Fike',
+'gologub',
+'gost',
+'gostinho',
+'guest6',
+'HACTEHbKA',
+'inkanus-gray',
+'inkanusinho',
+'j123123',
+'JaneBurt',
+'JloJle4Ka',
+'kegdan',
+'MOPCKOu_nemyx',
+'nepeKamHblu_nemyx',
+'npopa6',
+'PE4HOu_nemyx',
+'PolinaAksenova',
+'roman-kashitsyn',
+'rotoeb',
+'ru66oH4uk',
+'Soul_re@ver',
+'Staatssicherheit',
+'striker',
+'Tallybahn',
+'vistefan',
+'wvxvw',
+        ];
 
     const pituxes = [
 'cecilie',
@@ -98,20 +152,27 @@
 '6a6yuH',
 '6oHo6o',
 '7u7',
+'a282750',
+'105_306330_ru',
     ];
     var pituxes_ = {};
     pituxes.forEach(p => {pituxes_[p] = true; });
+    var whitelist_ = {};
+    whitelist.forEach(p => {whitelist_[p] = true; });
 
     $.gk('comments').each(function () {
         const name = $(this).gk('@name');
+        if (name in whitelist) return;
         if (name in pituxes_) {
             $(this).gk('container').remove();
             return;
         }
 
-        const text = $(this).gk('text');
+        const text = $(this).find('.comment-text:first');
         const nfmt = text.find('span,b,i').length;
-        if (nfmt > 3 && nfmt > 0.9 * text.text().split(/\s+/).length)
+        if (nfmt && (nfmt > 0.9 * text.text().split(/\s+/).length || text.children().length == 1)) {
             $(this).gk('container').remove();
+            return;
+        }
     });
 })();
