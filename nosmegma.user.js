@@ -1,12 +1,11 @@
 // ==UserScript==
 // @name         GK-settings
 // @namespace    http://tampermonkey.net/
-// @version      0.4
+// @version      0.4.1
 // @description  no smegma
 // @author       1024--, j123123
 // @match        *://govnokod.ru/*
 // @match        *://www.govnokod.ru/*
-// @icon         https://www.google.com/s2/favicons?domain=govnokod.ru
 // @grant        none
 // ==/UserScript==
 
@@ -98,6 +97,7 @@
 'adrnin',
 '6a6yuH',
 '6oHo6o',
+'7u7',
     ];
     var pituxes_ = {};
     pituxes.forEach(p => {pituxes_[p] = true; });
