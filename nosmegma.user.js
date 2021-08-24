@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GK-settings
 // @namespace    http://tampermonkey.net/
-// @version      0.5
+// @version      0.5.1
 // @description  no smegma
 // @author       1024--, j123123
 // @match        *://govnokod.ru/*
@@ -20,6 +20,8 @@ as published by Sam Hocevar. See http://www.wtfpl.net/ for more details.
     'use strict';
 
     if (location.pathname === '/comments') return;
+
+    const PARAM = '46c65898-fa7b-49bf-a4d0-f794ff1aa866';
 
     $.gk('comments:gkhidden>show');
 
@@ -154,11 +156,15 @@ as published by Sam Hocevar. See http://www.wtfpl.net/ for more details.
 '7u7',
 'a282750',
 '105_306330_ru',
+'AAypEIq',
+'ab368',
     ];
     var pituxes_ = {};
     pituxes.forEach(p => {pituxes_[p] = true; });
     var whitelist_ = {};
     whitelist.forEach(p => {whitelist_[p] = true; });
+
+    var newpituxes = Object.create(null);
 
     $.gk('comments').each(function () {
         const name = $(this).gk('@name');
@@ -172,7 +178,14 @@ as published by Sam Hocevar. See http://www.wtfpl.net/ for more details.
         const nfmt = text.find('span,b,i').length;
         if (nfmt && (nfmt > 0.9 * text.text().split(/\s+/).length || text.children().length == 1)) {
             $(this).gk('container').remove();
+            newpituxes[name] = true;
             return;
         }
     });
+
+    for (var _ in newpituxes) {
+        JSON.parse(localStorage.getItem(PARAM) || '[]').forEach(p => newpituxes[p] = true);
+        localStorage.setItem(PARAM, JSON.stringify(Object.keys(newpituxes)));
+        break;
+    }
 })();
