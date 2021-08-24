@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GK-settings
 // @namespace    http://tampermonkey.net/
-// @version      0.5.2
+// @version      0.5.3
 // @description  no smegma
 // @author       1024--, j123123
 // @match        *://govnokod.ru/*
@@ -175,11 +175,19 @@ as published by Sam Hocevar. See http://www.wtfpl.net/ for more details.
         }
 
         const text = $(this).find('.comment-text:first');
-        const nfmt = text.find('span,b,i').length;
-        if (nfmt && (nfmt > 0.9 * text.text().split(/\s+/).length || text.children().length == 1)) {
+        const fmt = text.find('span,b,i'), txt = text.text();
+        if (fmt.length && (fmt.length > 0.9 * txt.split(/\s+/).length)) {
             $(this).gk('container').remove();
             newpituxes[name] = true;
             return;
+        }
+        if (fmt.length) {
+            fmt.remove();
+            if (text.text().length < 0.1 * txt.length) {
+                $(this).gk('container').remove();
+                newpituxes[name] = true;
+                return;
+            }
         }
     });
 
