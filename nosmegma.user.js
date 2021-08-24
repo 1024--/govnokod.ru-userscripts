@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GK-settings
 // @namespace    http://tampermonkey.net/
-// @version      0.5.3
+// @version      0.5.4
 // @description  no smegma
 // @author       1024--, j123123
 // @match        *://govnokod.ru/*
@@ -158,6 +158,9 @@ as published by Sam Hocevar. See http://www.wtfpl.net/ for more details.
 '105_306330_ru',
 'AAypEIq',
 'ab368',
+'aderyabin',
+'adepto',
+'ADBzYkS',
     ];
     var pituxes_ = {};
     pituxes.forEach(p => {pituxes_[p] = true; });
@@ -182,8 +185,8 @@ as published by Sam Hocevar. See http://www.wtfpl.net/ for more details.
             return;
         }
         if (fmt.length) {
-            fmt.remove();
-            if (text.text().length < 0.1 * txt.length) {
+            var nfmt = [].map.call(fmt,f=>f.textContent.length).reduce((x,y)=>x+y,0);
+            if (nfmt > 0.4 * txt.length) {
                 $(this).gk('container').remove();
                 newpituxes[name] = true;
                 return;
