@@ -63,11 +63,11 @@ as published by Sam Hocevar. See http://www.wtfpl.net/ for more details.
 'PolinaAksenova',
 'roman-kashitsyn',
 'rotoeb',
-'ru66oH4uk',
 'Soul_re@ver',
 'Staatssicherheit',
 'striker',
 'Tallybahn',
+'TarasB',
 'vistefan',
 'wvxvw',
         ];
