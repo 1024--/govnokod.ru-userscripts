@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GK-settings
 // @namespace    http://tampermonkey.net/
-// @version      0.6.1
+// @version      0.6.2
 // @description  no smegma
 // @author       1024--, j123123
 // @match        *://govnokod.ru/*
@@ -76,7 +76,11 @@ as published by Sam Hocevar. See http://www.wtfpl.net/ for more details.
   const pituxes = {
     "51": "cecilie",
     "234": "miheich",
+    "249": "fuckyou",
     "287": "bugotrep",
+    "353": "woodoo",
+    "354": "woodoo1",
+    "365": "Bad_Wolf",
     "397": "grimskin",
     "462": "vladimir.loshchin",
     "581": "anycolor",
@@ -85,6 +89,7 @@ as published by Sam Hocevar. See http://www.wtfpl.net/ for more details.
     "628": "w-495",
     "629": "w495",
     "912": "nslz",
+    "923": "Крендель",
     "926": "comfly",
     "1027": "GovnocoderJr",
     "1054": "Novi4oK",
@@ -110,16 +115,36 @@ as published by Sam Hocevar. See http://www.wtfpl.net/ for more details.
     "1785": "cdf_easy",
     "1788": "1234",
     "1849": "REDNES",
+    "1885": "alex322",
     "1887": "firefred",
+    "1900": "Nigma143",
     "1942": "lads",
+    "1974": "pdk",
     "1977": "cp7",
+    "2006": "perldoc",
+    "2029": "korvald",
+    "2061": "SkyWalker",
     "2083": "utinger",
+    "2085": "Jaaahi",
+    "2087": "enikey",
+    "2092": "ort",
+    "2239": "enter-ar",
+    "2499": "Jakkk",
+    "2505": "Maxa",
     "2523": "111111",
     "2535": "jo0o00nyy",
+    "2710": "Falcon",
+    "2718": "van",
     "2729": "-A-",
+    "2752": "NotLinoleum",
+    "2754": "wyand",
+    "2775": "generall",
+    "2850": "red_falcon",
+    "2909": "zhen",
     "3020": "blackray",
     "3048": "jfhs",
     "3062": "andrewiv",
+    "3078": "twtwtw",
     "3087": "ganzzz",
     "3217": "adepto",
     "3336": "Kayfolom",
@@ -131,6 +156,7 @@ as published by Sam Hocevar. See http://www.wtfpl.net/ for more details.
     "3941": "qweqweqwe",
     "4014": "Crabbe",
     "4192": "mirTONU",
+    "4989": "sqlhack",
     "5394": "NoYaSloPaToy",
     "5487": "Mixa830",
     "5488": "Denya795",
